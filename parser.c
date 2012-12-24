@@ -16,7 +16,7 @@ char commandL=0;
 double parameter=0.0;
 int q=0;
 double x=0.0,y=0.0,z=0.0;
-int negFlag=0;
+bool negFlag=false;
 
 void SCommand(int speed)
 {
@@ -90,7 +90,7 @@ int W()
 			W();
 			break;
 		case '-':
-			negFlag=1;
+			negFlag=true;
 			W();
 			break;
 		default:
@@ -127,7 +127,7 @@ double Q()
 	else
 		/*Returns a token to the input stream*/
 		ungetc(c, f);
-	negFlag=0;
+	negFlag=false;
 	return parameter;
 }
 
@@ -140,23 +140,18 @@ void T()
 	{
 		/*Serching command parameters in current token*/
 		case 'S':
-		{
 			int k;
 			k=W();
 			SCommand(k);
 			stack=0;
 			q=0;
 			break;
-		}
 		case 'F':
-		{
 			double num;
 			num=Q();
 			FCommand(num);
 			break;
-		}
 		case 'X':
-		{
 			x=Q();
 			switch(commandL)
 			{
@@ -172,16 +167,14 @@ void T()
 				case ' ':
 					T();
 					break;
-				case '$':
+				case '%':
 					exit(0);
 					break;
 				case '\n':
 					;
 			};
 			break;
-		}
 		case 'Y':
-		{
 			y=Q();
 			switch(commandL)
 			{
@@ -197,16 +190,14 @@ void T()
 				case ' ':
 					T();
 					break;
-				case '$':
+				case '%':
 					exit(0);
 					break;
 				case '\n':
 					;
 			};
 			break;
-		}
 		case 'Z':
-		{
 			z=Q();
 			switch(commandL)
 			{
@@ -222,21 +213,18 @@ void T()
 				case ' ':
 					T();
 					break;
-				case '$':
+				case '%':
 					exit(0);
 					break;
 				case '\n':
 					;
 			};
 			break;
-		}
 		/*If no command parameters in token*/
 		default:
-		{
 			/*Returns a token to the input stream*/
 			ungetc(c, f);
 			break;
-		}
 	};
 }
 
@@ -257,7 +245,7 @@ int E()
 				case ' ':
 					T();
 					break;
-				case '$':
+				case '%':
 					exit(0);
 					break;
 				case '\n':
@@ -274,12 +262,14 @@ int E()
 				case ' ':
 					T();
 					break;
-				case '$':
+				case '%':
 					exit(0);
 					break;
 				case '\n':
 					;
 			};
+			break;
+		case '\n':
 			break;
 		/*If no commands in current token*/
 		default:
@@ -293,15 +283,15 @@ int main()
 	/*Open input stream as file*/
 	f=fopen("input", "r");
 	int c=0;
+	if(fgetc(f)!='%')
+		error();
 	while(1)
 	{
 		/*Get next token*/
 		c=fgetc(f);
 		/*If end of stream*/
-		if(c==-1 || c=='$') {
-			fclose(f);
+		if(c==-1 || c=='%')
 			return 0;
-		}
 		/*If not a new cortege*/
 		if(c!='\n')
 			/*Returns a token to the input stream*/
