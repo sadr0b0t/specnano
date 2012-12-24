@@ -57,7 +57,6 @@ void MCommands()
 
 int W()
 {
-	/*printf("W\n");*/
 	int c=fgetc(f);
 	switch(c)
 	{
@@ -88,7 +87,6 @@ int W()
 
 double Q()
 {
-	/*printf("Q\n");*/
 	double parameter;
 	parameter=W();
 	if(negFlag)
@@ -115,7 +113,6 @@ double Q()
 
 void T()
 {
-	/*printf("T\n");*/
 	int c=fgetc(f);
 	switch(c)
 	{
@@ -176,7 +173,6 @@ void T()
 
 int E()
 {
-	/*printf("E\n");*/
 	c=fgetc(f);
 	switch(c)
 	{
@@ -208,7 +204,7 @@ int E()
 
 int main()
 {
-	f=fopen("input2", "r");
+	f=fopen("input", "r");
 	while(1)
 	{
 		do
