@@ -1,2 +1,2 @@
-parser : parser.c
-		gcc -o parser parser.c -lm
+parser : gcode_analyzer.c
+		gcc -o analyzer gcode_analyzer.c -lm

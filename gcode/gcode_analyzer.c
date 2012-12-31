@@ -16,44 +16,13 @@ char commandL=0;
 double parameter=0.0;
 int q=0;
 double x=0.0,y=0.0,z=0.0;
-double F,S,H,I,J;
-int setFlags[5];
+double F,S,H,I,J,K,L,P,R;
+int setFlags[9];
 int negFlag=0;
 int c=0;
 
-void GCommands()
-{
-	switch(command)
-	{
-		case 1:
-			printf("G%d: %f %f %f\n", command, x, y, z);
-			break;
-		case 2:
-			printf("G%d: %f %f %f\n", command, x, y, z);
-			break;
-		default:
-			break;
-	};
-	for(int i=0; i<5; i++)
-		setFlags[i]=0;
-}
-
-void MCommands()
-{
-	switch(command)
-	{
-		case 1:
-			printf("M%d\n", command);
-			break;
-		case 2:
-			printf("M%d\n", command);
-			break;
-		default:
-			break;
-	};
-	for(int i=0; i<5; i++)
-		setFlags[i]=0;
-}
+#include"G_commands.h"
+#include"M_commands.h"
 
 int W()
 {
@@ -124,6 +93,41 @@ void T()
 		case 'F':
 			F=Q();
 			setFlags[0]=1;
+			break;
+			
+		case 'H':
+			H=Q();
+			setFlags[2]=1;
+			break;
+			
+		case 'I':
+			I=Q();
+			setFlags[3]=1;
+			break;
+			
+		case 'J':
+			J=Q();
+			setFlags[4]=1;
+			break;
+			
+		case 'K':
+			K=Q();
+			setFlags[5]=1;
+			break;
+			
+		case 'L':
+			L=Q();
+			setFlags[6]=1;
+			break;
+			
+		case 'P':
+			P=Q();
+			setFlags[7]=1;
+			break;
+			
+		case 'R':
+			R=Q();
+			setFlags[8]=1;
 			break;
 			
 		case 'X':
