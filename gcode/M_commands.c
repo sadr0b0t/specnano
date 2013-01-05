@@ -12,6 +12,6 @@ void MCommands()
 			break;
 	};
 	int i;
-	for(i=0; i<5; i++)
+	for(i=0; i<9; i++)
 		setFlags[i]=0;
 }
