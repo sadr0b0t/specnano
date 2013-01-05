@@ -1,6 +1,11 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
+#include"G_commands.h"
+#include"M_commands.h"
+
+#define GCode_G01 1
+#define GCode_G02 2
 
 FILE* f;
 
@@ -21,8 +26,47 @@ int setFlags[9];
 int negFlag=0;
 int c=0;
 
-#include"G_commands.h"
-#include"M_commands.h"
+void GCommands()
+{
+	switch(command)
+	{
+		case GCode_G01:
+			if(setFlags[0])
+				gcode_g01(x, y, z, F);
+			else
+				error(2);
+			break;
+		case GCode_G02:
+			if(setFlags[0] && setFlags[8])
+				gcode_g02(x, y, z, F, R);
+			else
+				error(2);
+			break;
+		default:
+			break;
+	};
+	int i;
+	for(i=0; i<9; i++)
+		setFlags[i]=0;
+}
+
+void MCommands()
+{
+	switch(command)
+	{
+		case 1:
+			printf("M%d\n", command);
+			break;
+		case 2:
+			printf("M%d\n", command);
+			break;
+		default:
+			break;
+	};
+	int i;
+	for(i=0; i<9; i++)
+		setFlags[i]=0;
+}
 
 int W()
 {
