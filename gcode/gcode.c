@@ -1,20 +1,19 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
-#include"G_commands.h"
-#include"M_commands.h"
 
 #define GCode_G01 1
 #define GCode_G02 2
 
-FILE* f;
-
 void error(int code)
 {
-	printf("Input Error!%d\n", code);
+	printf("Error Code %d\n", code);
 	exit(1);
 }
 
+FILE* f;
+
+int c=0;
 int stack=0;
 int command=0;
 char commandL=0;
@@ -24,9 +23,8 @@ double x=0.0,y=0.0,z=0.0;
 double F,S,H,I,J,K,L,P,R;
 int setFlags[9];
 int negFlag=0;
-int c=0;
 
-void GCommands()
+extern void GCommands()
 {
 	switch(command)
 	{
@@ -50,15 +48,13 @@ void GCommands()
 		setFlags[i]=0;
 }
 
-void MCommands()
+extern void MCommands()
 {
 	switch(command)
 	{
 		case 1:
-			printf("M%d\n", command);
 			break;
 		case 2:
-			printf("M%d\n", command);
 			break;
 		default:
 			break;
@@ -68,7 +64,7 @@ void MCommands()
 		setFlags[i]=0;
 }
 
-int W()
+extern int W()
 {
 	int c=fgetc(f);
 	switch(c)
@@ -98,7 +94,7 @@ int W()
 	};
 }
 
-double Q()
+extern double Q()
 {
 	double parameter;
 	parameter=W();
@@ -124,7 +120,7 @@ double Q()
 	return parameter;
 }
 
-void T()
+extern void T()
 {
 	int c=fgetc(f);
 	switch(c)
@@ -219,7 +215,7 @@ void T()
 	};
 }
 
-int E()
+extern int E()
 {
 	c=fgetc(f);
 	switch(c)
@@ -250,20 +246,8 @@ int E()
 	};
 }
 
-int main()
-{
-	f=fopen("input", "r");
-	while(1)
-	{
-		do
-		{
-			c=fgetc(f);
-		}
-		while(c=='\n');
-		if(c==-1)
-			return 0;
-		ungetc(c, f);
-		E();
-	};
-	return 0;
+extern void parse_start(FILE* ff)
+{	
+	f=ff;
+	E();
 }
