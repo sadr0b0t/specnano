@@ -1,3 +1,5 @@
+#include<stdio.h>
+
 int file_processing(FILE* f)
 {
 	int c=0;
