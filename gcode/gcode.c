@@ -5,10 +5,13 @@
 #define GCode_G01 1
 #define GCode_G02 2
 
-void error(int code)
+void catchError(int param, int code)
 {
-	printf("Error Code %d\n", code);
-	exit(1);
+	if(param)
+	{
+		printf("Error Code %d\n", code);
+		exit(1);
+	}
 }
 
 FILE* f;
@@ -21,7 +24,7 @@ double parameter=0.0;
 int q=0;
 double x=0.0,y=0.0,z=0.0;
 double F,S,H,I,J,K,L,P,R;
-int setFlags[9];
+int* setFlags;
 int negFlag=0;
 
 extern void GCommands()
@@ -30,15 +33,15 @@ extern void GCommands()
 	{
 		case GCode_G01:
 			if(setFlags[0])
-				gcode_g01(x, y, z, F);
+				catchError(gcode_g01(setFlags, x, y, z, F), 2);
 			else
-				error(2);
+				catchError(1, 2);
 			break;
 		case GCode_G02:
 			if(setFlags[0] && setFlags[8])
-				gcode_g02(x, y, z, F, R);
+				catchError(gcode_g02(setFlags, x, y, z, F, R), 2);
 			else
-				error(2);
+				catchError(1, 2);
 			break;
 		default:
 			break;
@@ -124,15 +127,15 @@ extern void T()
 {
 	int c=fgetc(f);
 	switch(c)
-	{
-		case 'S':
-			S=Q();
-			setFlags[1]=1;
-			break;
-			
+	{			
 		case 'F':
 			F=Q();
 			setFlags[0]=1;
+			break;
+			
+		case 'S':
+			S=Q();
+			setFlags[1]=1;
 			break;
 			
 		case 'H':
@@ -241,13 +244,14 @@ extern int E()
 			};
 			break;
 		default:
-			error(1);
+			catchError(1, 1);
 			break;
 	};
 }
 
 extern void parse_start(FILE* ff)
 {	
+	setFlags=malloc(sizeof(int)*9);
 	f=ff;
 	E();
 }

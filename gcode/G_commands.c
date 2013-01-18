@@ -1,11 +1,19 @@
 #include<stdio.h>
 
-extern void gcode_g01(double x, double y, double z, double f)
+extern int gcode_g01(int* flags, double x, double y, double z, double f)
 {
-	printf("G1: X%f Y%f Z%f F%f\n", x, y, z, f);
+	if(flags[0])
+		printf("G1: X%f Y%f Z%f F%f\n", x, y, z, f);
+	else
+		return 1;
+	return 0;
 }
 
-extern void gcode_g02(double x, double y, double z, double f, double r)
+extern int gcode_g02(int* flags, double x, double y, double z, double f, double r)
 {
-	printf("G2: X%f Y%f Z%f R%f F%f\n", x, y, z, r, f);
+	if(flags[0] && flags[8])
+		printf("G2: X%f Y%f Z%f R%f F%f\n", x, y, z, r, f);
+	else
+		return 1;
+	return 0;
 }
