@@ -8,6 +8,7 @@ void u (int*, float, float, const float);
 void filling (float**, int*, const float, char, int); // Заполнение массива
 void sort (float**, int, char); // Сортировка массива
 void offset (float**, int*); // Смещение массива
+void coordVertice (float**, int, const float, const float, const float);
 
 int main () {
 	int i, j;
@@ -18,6 +19,7 @@ int main () {
 	int size; // Размер массива
 	float** arr;
 	float** arrCoord; // Массив точек
+	float** arrCoordVertice; // Массив координат вершин
 	int index = 1;
 	read (&x0, &y0, &z0, &x1, &y1, &z1); // Считывание из файла
 	//input (&x0, &y0, &z0, &x1, &y1, &z1); // Ввод
@@ -55,14 +57,29 @@ int main () {
 	for (i = 0; i < size; ++i) {
 		printf ("(%f, %f, %f)\n", arrCoord [i][0], arrCoord [i][1], arrCoord [i][2]);
 	}
-	for (i=0; i < tmpSize; ++i) {
-		free(arr [i]);
+	coordVertice (arrCoord, size, dx, dy, dz);
+	int tmpSizeCoord = size;
+	offset (arrCoord, &size);
+	arrCoordVertice = (float**)malloc(size*sizeof(float*));
+	for (i = 0; i < size; ++i) {
+		arrCoordVertice [i] = (float*)malloc(3*sizeof(float));
+	}
+	printf ("\n");
+	for (i = 0; i < size; ++i) {
+		printf ("(%f, %f, %f)\n", arrCoord [i][0], arrCoord [i][1], arrCoord [i][2]);
+	}
+	for (i = 0; i < tmpSize; ++i) {
+		free (arr [i]);
 	}
 	free (arr);
-	for (i=0; i < size; ++i) {
+	for (i = 0; i < tmpSizeCoord; ++i) {
 		free (arrCoord [i]);
 	}
 	free (arrCoord);
+	for (i = 0; i < size; ++i) {
+		free (arrCoordVertice [i]);
+	}
+	free (arrCoordVertice);
 	return 0;
 }
 
@@ -259,6 +276,35 @@ void offset (float** arr, int* size) {
 			else {
 				j = *size - 1;
 			}
+		}
+	}
+}
+
+void coordVertice (float** arr, int size, const float dx, const float dy, const float dz) {
+	int i, j;
+	float quant = 0;
+	float du;
+	for (i = 0; i < size; ++i) {
+		for (j = 0; j < 3; ++j) {
+			if (j == 0)
+				du = dx;
+			else if (j == 1)
+				du = dy;
+			else
+				du = dz;
+			if (arr [i][j] > 0) {
+				while (arr [i][j] >= quant) {
+					quant += du;
+				}
+				arr [i][j] = quant - du;
+			}
+			else if (arr [i][j] < 0) {
+				while (arr [i][j] < quant) {
+					quant -= du;
+				}
+				arr [i][j] = quant;
+			}
+			quant = 0;
 		}
 	}
 }
