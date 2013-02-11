@@ -1,32 +1,32 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
-#include "Read.h"
+#include "Straight.h"
 
-int sizeArr (float, float, float, float, float, float, const float, const float, const float); // Возвращает размер массива
-void u (int*, float, float, const float);
-void filling (float**, int*, const float, char, int); // Заполнение массива
-void sort (float**, int, char); // Сортировка массива
-void offset (float**, int*); // Смещение массива
-void coordVertice (float**, int, const float, const float, const float);
+/*int sizeArr (double, double, double, double, double, double, const double, const double, const double); // Возвращает размер массива
+void u (int*, double, double, const double);
+void filling (double**, int*, const double, char, int); // Заполнение массива
+void sort (double**, int, char); // Сортировка массива
+void offset (double**, int*); // Смещение массива
+void coordVertice (double**, int, const double, const double, const double);*/
 
-int main () {
+void g01_enter_point (double x0, double y0, double z0, double x1, double y1, double z1, double f) {
 	int i, j;
-	const float dx = 1.0;
-	const float dy = 1.0;
-	const float dz = 1.0;
-	float x0, y0, z0, x1, y1, z1; // Наччальные и конечные координаты точек
-	int size; // Размер массива
-	float** arr;
-	float** arrCoord; // Массив точек
-	float** arrCoordVertice; // Массив координат вершин
+	const double dx = 1.0;
+	const double dy = 1.0;
+	const double dz = 1.0;
+	/*double x0, y0, z0, x1, y1, z1; // Наччальные и конечные координаты точек*/
+	int size; /* Размер массива */
+	double** arr;
+	double** arrCoord; /* Массив точек*/
+	double** arrCoordVertice; /* Массив координат вершин*/
 	int index = 1;
-	read (&x0, &y0, &z0, &x1, &y1, &z1); // Считывание из файла
-	//input (&x0, &y0, &z0, &x1, &y1, &z1); // Ввод
+	/*read (&x0, &y0, &z0, &x1, &y1, &z1); // Считывание из файла
+	//input (&x0, &y0, &z0, &x1, &y1, &z1); // Ввод*/
 	size = sizeArr (x0, y0, z0, x1, y1, z1, dx, dy, dz);
-	arr = (float**)malloc(size*sizeof(float*));
+	arr = (double**)malloc(size*sizeof(double*));
 	for (i = 0; i < size; ++i) {
-		arr [i] = (float*)malloc(3*sizeof(float));
+		arr [i] = (double*)malloc(3*sizeof(double));
 	}
 	arr [0][0] = x0;
 	arr [0][1] = y0;
@@ -45,24 +45,21 @@ int main () {
 	}
 	int tmpSize = size;
 	offset (arr, &size);
-	arrCoord = (float**)malloc(size*sizeof(float*));
+	arrCoord = (double**)malloc(size*sizeof(double*));
 	for (i = 0; i < size; ++i) {
-		arrCoord [i] = (float*)malloc(3*sizeof(float));
+		arrCoord [i] = (double*)malloc(3*sizeof(double));
 	}
 	for (i = 0; i < size; ++i) {
 		for (j = 0; j < 3; ++j) {
 			arrCoord [i][j] = arr [i][j];
 		}
 	}
-	for (i = 0; i < size; ++i) {
-		printf ("(%f, %f, %f)\n", arrCoord [i][0], arrCoord [i][1], arrCoord [i][2]);
-	}
 	coordVertice (arrCoord, size, dx, dy, dz);
 	int tmpSizeCoord = size;
 	offset (arrCoord, &size);
-	arrCoordVertice = (float**)malloc(size*sizeof(float*));
+	arrCoordVertice = (double**)malloc(size*sizeof(double*));
 	for (i = 0; i < size; ++i) {
-		arrCoordVertice [i] = (float*)malloc(3*sizeof(float));
+		arrCoordVertice [i] = (double*)malloc(3*sizeof(double));
 	}
 	printf ("\n");
 	for (i = 0; i < size; ++i) {
@@ -80,10 +77,9 @@ int main () {
 		free (arrCoordVertice [i]);
 	}
 	free (arrCoordVertice);
-	return 0;
 }
 
-int sizeArr (float x0, float y0, float z0, float x1, float y1, float z1, const float dx, const float dy, const float dz) {
+int sizeArr (double x0, double y0, double z0, double x1, double y1, double z1, const double dx, const double dy, const double dz) {
 	int size = 2;
 	u (&size, x0, x1, dx);
 	u (&size, y0, y1, dy);
@@ -91,8 +87,8 @@ int sizeArr (float x0, float y0, float z0, float x1, float y1, float z1, const f
 	return size;
 }
 
-void u (int* size, float u0, float u1, const float du) {
-	float quant = 0;
+void u (int* size, double u0, double u1, const double du) {
+	double quant = 0;
 	if (u0 < u1) {
 		if (u0 >= 0) {
 			while (quant <= u0) {
@@ -133,9 +129,9 @@ void u (int* size, float u0, float u1, const float du) {
 	}
 }
 
-void filling (float** arr, int* index, const float du, char u, int size) {
-	float quant = 0;
-	float u0, u1;
+void filling (double** arr, int* index, const double du, char u, int size) {
+	double quant = 0;
+	double u0, u1;
 	if (u == 'x') {
 		u0 = arr [0][0];
 		u1 = arr [size - 1][0];
@@ -218,10 +214,10 @@ void filling (float** arr, int* index, const float du, char u, int size) {
 	}
 }
 
-void sort (float** arr, int size, char u) {
-	float temp [3];
+void sort (double** arr, int size, char u) {
+	double temp [3];
 	int i, j, k, l;
-	float u0, u1;
+	double u0, u1;
 	if (u == 'x') {
 		u0 = arr [0][0];
 		u1 = arr [size - 1][0];
@@ -260,7 +256,7 @@ void sort (float** arr, int size, char u) {
 	}
 }
 
-void offset (float** arr, int* size) {
+void offset (double** arr, int* size) {
 	int i, j, k, l;
 	for (i = 0; i < *size; ++i) {
 		for (j = i + 1; j < *size; ++j) {
@@ -280,10 +276,10 @@ void offset (float** arr, int* size) {
 	}
 }
 
-void coordVertice (float** arr, int size, const float dx, const float dy, const float dz) {
+void coordVertice (double** arr, int size, const double dx, const double dy, const double dz) {
 	int i, j;
-	float quant = 0;
-	float du;
+	double quant = 0;
+	double du;
 	for (i = 0; i < size; ++i) {
 		for (j = 0; j < 3; ++j) {
 			if (j == 0)
