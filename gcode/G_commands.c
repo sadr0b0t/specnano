@@ -1,5 +1,5 @@
 #include<stdio.h>
-/*#include"g01/Straight.h"*/
+#include"g01/g01.h"
 
 int* flags;
 
@@ -19,8 +19,8 @@ extern int gcode_g01(int* _f, double x, double y, double z, double f)
 {
 	flags=_f;
 	if(!(flags[0] && flags_calc(1)))
-		return 1;	
-	/*g01_enter_point(0.0, 0.0, 0.0, x, y, z, f);*/
+		return 1;
+	g01_enter_point(x, y, z, f);
 	return 0;
 }
 

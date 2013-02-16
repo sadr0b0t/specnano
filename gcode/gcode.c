@@ -64,7 +64,7 @@ extern void GCommands()
 	switch(command)
 	{
 		case GCode_G01:
-			catchError(gcode_g01(setFlags, x, y, z, F), 2);
+			catchError(gcode_g01(setFlags, x, y, z, F), 5);
 			break;
 		case GCode_G02:
 			catchError(gcode_g02(setFlags, x, y, z, F, R), 2);
@@ -372,6 +372,10 @@ extern int E()
 extern void parse_start(FILE* ff)
 {	
 	setFlags=malloc(sizeof(int)*12);
+	int i;
+	for(i=0; i<12; i++)
+		setFlags[i]=0;
 	f=ff;
 	E();
+	free(setFlags);
 }

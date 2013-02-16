@@ -1,35 +1,27 @@
-#include <stdio.h>
-#include <math.h>
-#include <stdlib.h>
-#include "g01.h"
-
-int sizeArr (double, double, double, double, double, double, const double, const double, const double); // Возвращает размер массива
-void u (int*, double, double, const double);
-void filling (double**, int*, const double, char, int); // Заполнение массива
-void sort (double**, int, char); // Сортировка массива
-void offset (double**, int*); // Смещение массива
-void coordVertice (double**, int, const double, const double, const double);
+#include<stdio.h>
+#include<math.h>
+#include<stdlib.h>
+#include"g01.h"
 
 double x0 = 0;
 double Y0 = 0;
 double z0 = 0;
 
-void g01_enter_point (double x1, double y1, double z1, double f) {
+extern void g01_enter_point (double x1, double y1, double z1, double f)
+{
 	int i, j;
 	const double dx = 1.0;
 	const double dy = 1.0;
 	const double dz = 1.0;
-	/*double x0, Y0, z0, x1, y1, z1; // Наччальные и конечные координаты точек*/
-	int size; /* Размер массива */
+	int size;
 	double** arr;
-	double** arrCoord; /* Массив точек*/
-	double** arrCoordVertice; /* Массив координат вершин*/
+	double** arrCoord;
+	double** arrCoordVertice;
 	int index = 1;
-	/*read (&x0, &Y0, &z0, &x1, &y1, &z1); // Считывание из файла*/
-	/*input (&x0, &Y0, &z0, &x1, &y1, &z1); // Ввод*/
 	size = sizeArr (x0, Y0, z0, x1, y1, z1, dx, dy, dz);
 	arr = (double**)malloc(size*sizeof(double*));
-	for (i = 0; i < size; ++i) {
+	for (i = 0; i < size; ++i)
+	{
 		arr [i] = (double*)malloc(3*sizeof(double));
 	}
 	arr [0][0] = x0;
@@ -41,20 +33,26 @@ void g01_enter_point (double x1, double y1, double z1, double f) {
 	filling (arr, &index, dx, 'x', size);
 	filling (arr, &index, dy, 'y', size);
 	filling (arr, &index, dz, 'z', size);
-	if (x0 != x1) {
+	if (x0 != x1)
+	{
 		sort (arr, size, 'x');
 	}
-	else if (Y0 != y1) {
-		sort (arr, size, 'y');
-	}
+	else 
+		if (Y0 != y1)
+		{
+			sort (arr, size, 'y');
+		}
 	int tmpSize = size;
 	offset (arr, &size);
 	arrCoord = (double**)malloc(size*sizeof(double*));
-	for (i = 0; i < size; ++i) {
+	for (i = 0; i < size; ++i)
+	{
 		arrCoord [i] = (double*)malloc(3*sizeof(double));
 	}
-	for (i = 0; i < size; ++i) {
-		for (j = 0; j < 3; ++j) {
+	for (i = 0; i < size; ++i)
+	{
+		for (j = 0; j < 3; ++j)
+		{
 			arrCoord [i][j] = arr [i][j];
 		}
 	}
@@ -62,22 +60,23 @@ void g01_enter_point (double x1, double y1, double z1, double f) {
 	int tmpSizeCoord = size;
 	offset (arrCoord, &size);
 	arrCoordVertice = (double**)malloc(size*sizeof(double*));
-	for (i = 0; i < size; ++i) {
+	for (i = 0; i < size; ++i)
+	{
 		arrCoordVertice [i] = (double*)malloc(3*sizeof(double));
 	}
-	printf ("\n");
-	for (i = 0; i < size; ++i) {
-		printf ("(%f, %f, %f)\n", arrCoord [i][0], arrCoord [i][1], arrCoord [i][2]);
-	}
-	for (i = 0; i < tmpSize; ++i) {
+	printf ("(%f, %f, %f) (%f, %f, %f)\n", x0, Y0, z0, x1, y1, z1);
+	for (i = 0; i < tmpSize; ++i)
+	{
 		free (arr [i]);
 	}
 	free (arr);
-	for (i = 0; i < tmpSizeCoord; ++i) {
+	for (i = 0; i < tmpSizeCoord; ++i)
+	{
 		free (arrCoord [i]);
 	}
 	free (arrCoord);
-	for (i = 0; i < size; ++i) {
+	for (i = 0; i < size; ++i)
+	{
 		free (arrCoordVertice [i]);
 	}
 	free (arrCoordVertice);
@@ -86,10 +85,10 @@ void g01_enter_point (double x1, double y1, double z1, double f) {
 	z0 = z1;
 }
 
-int sizeArr (double x0, double Y0, double z0, double x1, double y1, double z1, const double dx, const double dy, const double dz) {
+int sizeArr (double x0, double y0, double z0, double x1, double y1, double z1, const double dx, const double dy, const double dz) {
 	int size = 2;
 	u (&size, x0, x1, dx);
-	u (&size, Y0, y1, dy);
+	u (&size, y0, y1, dy);
 	u (&size, z0, z1, dz);
 	return size;
 }
