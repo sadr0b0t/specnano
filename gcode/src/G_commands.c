@@ -1,5 +1,4 @@
-#include<stdio.h>
-#include"g01/g01.h"
+#include"../inc/G_commands.h"
 
 int* flags;
 

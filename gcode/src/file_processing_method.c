@@ -1,6 +1,6 @@
-#include<stdio.h>
+#include"../inc/file_processing_method.h"
 
-int file_processing(FILE* f)
+extern int file_processing(FILE* f)
 {
 	int c=0;
 	do

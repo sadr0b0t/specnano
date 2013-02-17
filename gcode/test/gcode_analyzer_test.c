@@ -1,5 +1,5 @@
 #include<stdio.h>
-#include"../file_processing_method.h"
+#include"../inc/file_processing_method.h"
 
 FILE* f;
 
