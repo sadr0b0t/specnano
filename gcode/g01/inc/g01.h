@@ -1,3 +1,7 @@
+#include<stdio.h>
+#include<math.h>
+#include<stdlib.h>
+
 int sizeArr (double, double, double, double, double, double, const double, const double, const double);
 void u (int*, double, double, const double);
 void filling (double**, int*, const double, char, int);
