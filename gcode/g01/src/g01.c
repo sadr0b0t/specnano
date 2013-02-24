@@ -1,4 +1,4 @@
-#include"g01.h"
+#include"../inc/g01.h"
 
 double x0 = 0;
 double Y0 = 0;
