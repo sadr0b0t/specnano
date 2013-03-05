@@ -35,11 +35,45 @@
 #define GCode_M02 2
 #define GCode_M03 3
 
-void catchError(int, int);
+/* Error codes */
+#define ERROR_CODE_G01 1
+#define ERROR_CODE_G02 2
+#define ERROR_CODE_G03 3
+#define ERROR_CODE_G04 4
+#define ERROR_CODE_G15 15
+#define ERROR_CODE_G16 16
+#define ERROR_CODE_G17 17
+#define ERROR_CODE_G18 18
+#define ERROR_CODE_G19 19
+#define ERROR_CODE_G40 40
+#define ERROR_CODE_G41 41
+#define ERROR_CODE_G42 42
+#define ERROR_CODE_G43 43
+#define ERROR_CODE_G44 44
+#define ERROR_CODE_G49 49
+#define ERROR_CODE_G53 53
+#define ERROR_CODE_G70 70
+#define ERROR_CODE_G71 71
+#define ERROR_CODE_G80 80
+#define ERROR_CODE_G81 81
+#define ERROR_CODE_G82 82
+#define ERROR_CODE_G83 83
+#define ERROR_CODE_G84 84
+#define ERROR_CODE_G90 90
+#define ERROR_CODE_G91 91
+#define ERROR_CODE_G94 94
+#define ERROR_CODE_G95 95
+
+void catchError(int, int, char*);
 extern void GCommands();
 extern void MCommands();
 extern int W();
 extern double A();
 extern void T();
 extern int E();
-extern void parse_start(FILE*);
+extern int parse_start(FILE*);
+
+/* G-commands handler delegates*/
+int (*handler_g01)(int*, double, double, double, double);
+int (*handler_g02)(int*, double, double, double, double, double);
+

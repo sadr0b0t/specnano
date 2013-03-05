@@ -1,5 +1,5 @@
 #include<stdio.h>
-#include"../g01/g01.h"
+#include"../g01/inc/g01.h"
 
 int flags_calc(int);
 

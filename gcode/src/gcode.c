@@ -1,11 +1,13 @@
 #include"../inc/gcode.h"
 
-void catchError(int param, int code)
+int Error_Status=0;
+
+void catchError(int param, int code, char* msg)
 {
 	if(param)
 	{
-		printf("Error Code %d\n", code);
-		exit(1);
+		printf("Error Code %d: %s\n", code, msg);
+		Error_Status = 1;
 	}
 }
 
@@ -23,92 +25,96 @@ int M=0;
 int* setFlags;
 int negFlag=0;
 
+
+
 extern void GCommands()
 {
 	switch(command)
 	{
 		case GCode_G01:
-			catchError(gcode_g01(setFlags, x, y, z, F), 5);
+		    if(handler_g01)
+		        catchError(handler_g01(setFlags, x, y, z, F), ERROR_CODE_G01, "");
 			break;
 		case GCode_G02:
-			catchError(gcode_g02(setFlags, x, y, z, F, R), 2);
+			if(handler_g02)
+		        catchError(handler_g02(setFlags, x, y, z, F, R), ERROR_CODE_G02, "");
 			break;
 		case GCode_G03:
-			catchError(gcode_g03(setFlags, x, y, z, F, R), 2);
+			catchError(gcode_g03(setFlags, x, y, z, F, R), ERROR_CODE_G03, "");
 			break;
 		case GCode_G04:
-			catchError(gcode_g04(setFlags), 2);
+			catchError(gcode_g04(setFlags), ERROR_CODE_G04, "");
 			break;
 		case GCode_G15:
-			catchError(gcode_g15(setFlags, x, y, z), 2);
+			catchError(gcode_g15(setFlags, x, y, z), ERROR_CODE_G15, "");
 			break;
 		case GCode_G16:
-			catchError(gcode_g16(setFlags, x, y), 2);
+			catchError(gcode_g16(setFlags, x, y), ERROR_CODE_G16, "");
 			break;
 			
 		case GCode_G17:
-			catchError(gcode_g17(setFlags), 2);
+			catchError(gcode_g17(setFlags), ERROR_CODE_G17, "");
 			break;
 		case GCode_G18:
-			catchError(gcode_g18(setFlags), 2);
+			catchError(gcode_g18(setFlags), ERROR_CODE_G18, "");
 			break;
 		case GCode_G19:
-			catchError(gcode_g19(setFlags), 2);
+			catchError(gcode_g19(setFlags), ERROR_CODE_G19, "");
 			break;
 			
 		case GCode_G40:
-			catchError(gcode_g40(setFlags, x, y, z, F), 2);
+			catchError(gcode_g40(setFlags, x, y, z, F), ERROR_CODE_G40, "");
 			break;
 		case GCode_G41:
-			catchError(gcode_g41(setFlags, x, y, z, F, D), 2);
+			catchError(gcode_g41(setFlags, x, y, z, F, D), ERROR_CODE_G41, "");
 			break;
 		case GCode_G42:
-			catchError(gcode_g42(setFlags, x, y, z, F, D), 2);
+			catchError(gcode_g42(setFlags, x, y, z, F, D), ERROR_CODE_G42, "");
 			break;
 		case GCode_G43:
-			catchError(gcode_g43(setFlags, x, y, z, F, H, S, M), 2);
+			catchError(gcode_g43(setFlags, x, y, z, F, H, S, M), ERROR_CODE_G43, "");
 			break;
 		case GCode_G44:
-			catchError(gcode_g44(setFlags, x, y, z, F, H, S, M), 2);
+			catchError(gcode_g44(setFlags, x, y, z, F, H, S, M), ERROR_CODE_G44, "");
 			break;
 		case GCode_G49:
-			catchError(gcode_g49(setFlags, x, y, z), 2);
+			catchError(gcode_g49(setFlags, x, y, z), ERROR_CODE_G49, "");
 			break;
 		case GCode_G53:
-			catchError(gcode_g53(setFlags), 2);
+			catchError(gcode_g53(setFlags), ERROR_CODE_G53 , "");
 			break;
 		case GCode_G70:
-			catchError(gcode_g70(setFlags), 2);
+			catchError(gcode_g70(setFlags), ERROR_CODE_G70 , "");
 			break;
 		case GCode_G71:
-			catchError(gcode_g71(setFlags), 2);
+			catchError(gcode_g71(setFlags), ERROR_CODE_G71 , "");
 			break;
 		case GCode_G80:
-			catchError(gcode_g80(setFlags), 2);
+			catchError(gcode_g80(setFlags), ERROR_CODE_G80 , "");
 			break;
 		case GCode_G81:
-			catchError(gcode_g81(setFlags, x, y, z, F, R), 2);
+			catchError(gcode_g81(setFlags, x, y, z, F, R), ERROR_CODE_G81 , "");
 			break;
 		case GCode_G82:
-			catchError(gcode_g82(setFlags, x, y, z, F, R, P), 2);
+			catchError(gcode_g82(setFlags, x, y, z, F, R, P), ERROR_CODE_G82 , "");
 			break;
 		case GCode_G83:
-			catchError(gcode_g83(setFlags, x, y, z, F, R, Q), 2);
+			catchError(gcode_g83(setFlags, x, y, z, F, R, Q), ERROR_CODE_G83 , "");
 			break;
 		case GCode_G84:
-			catchError(gcode_g84(setFlags, x, y, z, F, R, M), 2);
+			catchError(gcode_g84(setFlags, x, y, z, F, R, M), ERROR_CODE_G84 , "");
 			break;
 		case GCode_G90:
-			catchError(gcode_g90(setFlags, x, y, z, F), 2);
+			catchError(gcode_g90(setFlags, x, y, z, F), ERROR_CODE_G90 , "");
 			break;
 		case GCode_G91:
-			catchError(gcode_g91(setFlags), 2);
+			catchError(gcode_g91(setFlags), ERROR_CODE_G91 , "");
 			break;
 		case GCode_G94:
-			catchError(gcode_g94(setFlags), 2);
+			catchError(gcode_g94(setFlags), ERROR_CODE_G94 , "");
 			break;
 		case GCode_G95:
-			catchError(gcode_g95(setFlags), 2);
+			catchError(gcode_g95(setFlags), ERROR_CODE_G95 , "");
 			break;
 		default:
 			break;
@@ -328,15 +334,24 @@ extern int E()
 			};
 			break;
 		default:
-			catchError(1, 1);
+			catchError(1, 0, "Invalide command in input stream (should be started from 'G' or 'M')");
 			break;
 	};
+	if(Error_Status)
+		return 1;
+	return 0;
+	
 }
 
-extern void parse_start(FILE* ff)
+extern int parse_start(FILE* ff)
 {	
 	setFlags=malloc(sizeof(int)*12);
 	f=ff;
-	E();
+	Error_Status=0;
+	int code=E();
 	free(setFlags);
+	if(code)
+		return 0;
+	else
+		return 1;
 }

@@ -11,6 +11,7 @@ extern int file_processing(FILE* f)
 	if(c==-1)
 		return 1;
 	ungetc(c, f);
-	parse_start(f);
-	return 0;
+	if(parse_start(f))
+		return 0;
+	return 1;
 }
