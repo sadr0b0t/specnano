@@ -2,4 +2,6 @@
 #include<math.h>
 #include<stdlib.h>
 
-extern void g02_enter_point (double, double, double, int);
+void g02_centerCircle (double, double, double, double*, double*);
+
+extern void g02_enter_point (double, double, double, double);
