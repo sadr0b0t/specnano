@@ -10,11 +10,11 @@ SOURCE_FILES=gcode_test.c\
         ${GCODE_HOME}/g01/src/g01.c
 
 self_test:
-	gcc ${SOURCE_FILES}
+	gcc ${SOURCE_FILES} -lm
 
 all:
 	self_test
 	
 clean:
-	rm -rf *~ *.out
+	rm -rf *~ *.out *.exe
 
