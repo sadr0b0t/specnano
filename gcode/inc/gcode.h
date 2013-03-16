@@ -73,7 +73,9 @@ extern void T();
 extern int E();
 extern int parse_start(FILE*);
 
-/* G-commands handler delegates*/
+/* G-commands handler delegates */
 int (*handler_g01)(int*, double, double, double, double);
 int (*handler_g02)(int*, double, double, double, double, double);
 
+/* Result handler delegate for all g-commands */
+int (*handler_gcommand_result)(double dx, double dy, double dz, double f);

@@ -5,9 +5,13 @@
 
 FILE* f;
 
-int test6_math(char* input_data_path)
-{
+int handler_result_g01_test(double dx, double dy, double dz, double f) {
+	printf("G1 result: dX%f dY%f dZ%f F%f\n", dx, dy, dz, f);
+}
+
+int test6_math(char* input_data_path) {
     handler_g01 = &gcode_g01;
+    handler_gcommand_result = &handler_g01_result;
 
     char file_path[strlen(input_data_path) + strlen("input_test04") + 2]; 
     sprintf(file_path, "%s/%s", input_data_path, "input_test04");
@@ -18,4 +22,3 @@ int test6_math(char* input_data_path)
 		if(file_processing(f))
 			return 0;
 }
-

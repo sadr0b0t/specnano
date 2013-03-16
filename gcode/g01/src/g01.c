@@ -1,8 +1,11 @@
 #include"../inc/g01.h"
+#include"../../inc/gcode.h"
 
 double x0 = 0;
 double Y0 = 0;
 double z0 = 0;
+// TODO: implement f calculation
+double f0 = 0;
 
 extern void g01_enter_point (double x1, double y1, double z1, double f)
 {
@@ -80,6 +83,10 @@ extern void g01_enter_point (double x1, double y1, double z1, double f)
 	x0 = x1;
 	Y0 = y1;
 	z0 = z1;
+	
+	// handle result
+	if(handler_gcommand_result)
+	    handler_gcommand_result(x0, Y0, z0, f0);
 }
 
 int sizeArr (double x0, double y0, double z0, double x1, double y1, double z1, const double dx, const double dy, const double dz) {
