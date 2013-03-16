@@ -1,7 +1,4 @@
-#include<stdio.h>
-#include"../inc/file_processing_method.h"
-#include"../inc/gcode.h"
-#include"../inc/G_commands.h"
+#include"g01_test.h"
 
 FILE* f;
 
