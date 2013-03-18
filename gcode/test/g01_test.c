@@ -8,7 +8,7 @@ int handler_result_g01_test(double dx, double dy, double dz, double f) {
 
 int test6_math(char* input_data_path) {
     handler_g01 = &gcode_g01;
-    handler_gcommand_result = &handler_g01_result;
+    handler_gcommand_result = &handler_result_g01_test;
 
     char file_path[strlen(input_data_path) + strlen("input_test04") + 2]; 
     sprintf(file_path, "%s/%s", input_data_path, "input_test04");

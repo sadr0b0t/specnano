@@ -7,7 +7,8 @@ extern int file_processing(FILE* f)
 	{
 		c=fgetc(f);
 	}
-	while(c=='\n');
+	// handle both windows and unix end of line
+	while(c=='\n' || c=='\r');
 	if(c==-1)
 		return 1;
 	ungetc(c, f);
