@@ -1,3 +1,7 @@
+#include<stdio.h>
+#include"gcode_analyzer_test.h"
+#include"g01_test.h"
+
 /**
  * Pass test.
  */

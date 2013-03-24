@@ -1,5 +1,7 @@
 #include"../inc/file_processing_method.h"
 
+/*Способ обработки входного файла*/
+/*Function, that define method of file processing*/
 extern int file_processing(FILE* f)
 {
 	int c=0;
@@ -7,7 +9,6 @@ extern int file_processing(FILE* f)
 	{
 		c=fgetc(f);
 	}
-	// handle both windows and unix end of line
 	while(c=='\n' || c=='\r');
 	if(c==-1)
 		return 1;

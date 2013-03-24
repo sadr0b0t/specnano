@@ -2,6 +2,8 @@
 
 int* flags;
 
+/*Функция подсчитывает количество аргументов, полученных из входного файла*/
+/*Validation of argument's quantity received from input file*/
 int flags_calc(int q)
 {
 	int i;
@@ -14,6 +16,9 @@ int flags_calc(int q)
 	return 0;
 }
 
+/*Реализация gcode команд*/
+/*Implementation of gcode commands*/
+/////////////////////////////////////////////////////////////////////
 extern int gcode_g01(int* _f, double x, double y, double z, double f)
 {
 	flags=_f;
@@ -256,3 +261,4 @@ extern int gcode_g95(int* _f)
 	printf("G95");
 	return 0;
 }
+/////////////////////////////

@@ -2,6 +2,8 @@
 
 int Error_Status=0;
 
+/*Общая функция отлова ошибок*/
+/*General function for catching errors*/
 void catchError(int param, int code, char* msg)
 {
 	if(param)
@@ -26,7 +28,9 @@ int* setFlags;
 int negFlag=0;
 
 
-
+/*Вызовы имплементаций gcode команд*/
+/*Calls for gcode implementations*/
+//////////////////////////////////////////////////////////////////////////////////////
 extern void GCommands()
 {
 	switch(command)
@@ -141,7 +145,11 @@ extern void MCommands()
 	for(i=0; i<12; i++)
 		setFlags[i]=0;
 }
+///////////////////////////////////////////
 
+/*Функции грамматики лексического анализатора (см. "parser.odt" в specnano/doc)*/
+/*Functions from lexical analyzer grammar (see "parser.odt" from specnano/doc)*/
+///////////////////////
 extern int W()
 {
 	int c=fgetc(f);
@@ -342,6 +350,7 @@ extern int E()
 	return 0;
 	
 }
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 extern int parse_start(FILE* ff)
 {	

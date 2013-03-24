@@ -6,9 +6,10 @@ int handler_g01_test4(int* a, double x, double y, double z, double f)
 {
 	printf("G1: X%f Y%f Z%f F%f\n", x, y, z, f);
 	if(x==2 && y==3 && z==4 && f==5)
-		printf("pass!");
+		printf("Pass!\n");
 	else
-		printf("fail!");
+		printf("Fail!\n");
+	return 0;
 }
 
 int test1(char* input_data_path)
@@ -69,5 +70,3 @@ int test5(char* input_data_path)
 		if(file_processing(f))
 			return 0;
 }
-
-

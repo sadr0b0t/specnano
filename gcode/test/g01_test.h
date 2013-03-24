@@ -5,4 +5,3 @@
 #include"../inc/G_commands.h"
 
 int test6_math(char* input_data_path);
-
