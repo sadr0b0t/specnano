@@ -1,7 +1,7 @@
 #include"../inc/g02.h"
 
 double g02_x0 = 3.2;
-double g02_y0 = 2.3;
+double g02_y0 = 4.3;
 
 extern void g02_enter_point (double x1, double y1, double r, double f)
 {
@@ -10,14 +10,44 @@ extern void g02_enter_point (double x1, double y1, double r, double f)
 	
 	double x_r, y_r;
 	double** arr;
-	int size;
+	double** arr1;
+	int size, size1;
+	int i;
 	
 	g02_centerCircle (x1, y1, r, &x_r, &y_r);
 	
-	printf ("g02: (%f, %f)\n", x_r, y_r);
+	//printf ("g02: (%f, %f)\n", x_r, y_r);
 	
 	size = g02_size (dx, dy, x1, y1, r, x_r, y_r);
 	printf ("%d\n", size);
+	
+	arr = (double**)malloc(size*sizeof(double*));
+	for (i = 0; i < size; ++i)
+		arr [i] = (double*)malloc(2*sizeof(double));
+	
+	arr = g02_ElMas(size, dx, dy, x1, y1, r, x_r, y_r);
+	size1 = size;
+	g02_offset(arr, &size1);
+	arr1 = (double**)malloc(size1*sizeof(double*));
+	for (i = 0; i < size1; ++i)
+		arr1 [i] = (double*)malloc(2*sizeof(double));
+	for (i = 0; i < size1; ++i) {
+		arr1 [i][0] = arr [i][0];
+		arr1 [i][1] = arr [i][1];
+	}
+	
+	for (i = 0; i < size; ++i) {
+		printf ("(%f, %f)\n", arr1[i][0], arr1[i][1]);
+	}
+	
+	for (i = 0; i < size; ++i) {
+		free (arr [i]);
+	}
+	free (arr);
+	for (i = 0; i < size1; ++i) {
+		free (arr1 [i]);
+	}
+	free (arr1);
 	
 	g02_x0 = x1;
 	g02_y0 = y1;
@@ -108,11 +138,11 @@ void g02_area (double dx, double dy, double x1, double y1, double r, double x_r,
 			}	
 		}
 		else {
-			while (g02_x0 >= *kx0 + dx) {
+			while (x1 >= *kx0 + dx) {
 				*kx0 += dx;
 			}
 			*kx1 = *kx0;
-			while (x1 > *kx1) {
+			while (g02_x0 > *kx1) {
 				*kx1 += dx;
 			}
 			while (y_r - r >= *ky0 + dy) {
@@ -249,7 +279,7 @@ void g02_area (double dx, double dy, double x1, double y1, double r, double x_r,
 		}
 	}
 	
-	printf ("(%f, %f), (%f, %f)\n", *kx0*dx, *kx1*dx, *ky0*dy, *ky1*dy);
+	//printf ("(%f, %f), (%f, %f)\n", *kx0*dx, *kx1*dx, *ky0*dy, *ky1*dy);
 }
 
 int g02_size (double dx, double dy, double x1, double y1, double r, double x_r, double y_r) {
@@ -319,28 +349,575 @@ int g02_size (double dx, double dy, double x1, double y1, double r, double x_r, 
 	}
 	else if (y1 == g02_y0) {
 		if (x1 > g02_x0) {
-			
+			double j;
+			if (xk0 == g02_x0)
+				j = xk0;
+			else
+				j = xk0 + dx;
+			for (i = j; i <= x1; i = i + dx) {
+				if (r >= i - x_r) {
+					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= y1 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= yk1)
+						size = size + 1;
+					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= y1 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= yk1)
+						size = size + 1;
+				}
+			}
+			if (yk0 == g02_y0)
+				j = yk0;
+			else
+				j = yk0 + dy;
+			for (i = j; i <= yk1; i = i + dy) {
+				if (r >= i - y_r) {
+					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= g02_x0 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= x1)
+						size = size + 1;
+					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= g02_x0 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= x1)
+						size = size + 1;
+				}
+			}
 		}
 		else {
-			
+			double j;
+			if (xk0 == x1)
+				j = xk0;
+			else
+				j = xk0 + dx;
+			for (i = j; i <= g02_x0; i = i + dx) {
+				if (r >= i - x_r) {
+					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= yk0 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= y1)
+						size = size + 1;
+					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= yk0 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= y1)
+						size = size + 1;
+				}
+			}
+			for (i = yk0; i <= y1; i = i + dy) {
+				if (r >= i - y_r) {
+					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= x1 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= g02_x0)
+						size = size + 1;
+					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= x1 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= g02_x0)
+						size = size + 1;
+				}
+			}			
 		}
 	}
 	else if (x1 > g02_x0) {
 		if (y1 > g02_y0) {
-			
+			for (i = xk0; i <= x1; i = i + dx) {
+				if (r >= i - x_r) {
+					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= g02_y0 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= yk1)
+						size = size + 1;
+					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= g02_y0 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= yk1)
+						size = size + 1;
+				}
+			}
+			double j;
+			if (yk0 == g02_y0)
+				j = yk0;
+			else
+				j = yk0 + dy;
+			for (i = j; i <= yk1; i = i + dy) {
+				if (r >= i - y_r) {
+					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= xk0 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= x1)
+						size = size + 1;
+					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= xk0 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= x1)
+						size = size + 1;
+				}
+			}			
 		}
 		else {
-			
+			double j;
+			if (xk0 == g02_x0)
+				j = xk0;
+			else
+				j = xk0 + dx;
+			for (i = j; i <= xk1; i = i + dx) {
+				if (r >= i - x_r) {
+					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= y1 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= yk1)
+						size = size + 1;
+					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= y1 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= yk1)
+						size = size + 1;
+				}
+			}
+			if (yk0 == y1)
+				j = yk0;
+			else
+				j = yk0 + dy;
+			for (i = j; i <= yk1; i = i + dy) {
+				if (r >= i - y_r) {
+					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= g02_x0 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= kx1)
+						size = size + 1;
+					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= g02_x0 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= kx1)
+						size = size + 1;
+				}
+			}							
 		}
 	}
 	else {
 		if (y1 < g02_y0) {
-			
+			double j;
+			if (xk0 == x1)
+				j = xk0;
+			else
+				j = xk0 + dx;
+			for (i = j; i <= xk1; i = i + dx) {
+				if (r >= i - x_r) {
+					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= yk0 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= g02_y0)
+						size = size + 1;
+					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= yk0 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= g02_y0)
+						size = size + 1;
+				}
+			}
+			for (i = yk0; i <= g02_y0; i = i + dy) {
+				if (r >= i - y_r) {
+					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= x1 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= kx1)
+						size = size + 1;
+					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= x1 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= kx1)
+						size = size + 1;
+				}
+			}
 		}
 		else {
-			
+			for (i = xk0; i <= g02_x0; i = i + dx) {
+				if (r >= i - x_r) {
+					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= yk0 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= y1)
+						size = size + 1;
+					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= yk0 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= y1)
+						size = size + 1;
+				}
+			}
+			for (i = yk0; i <= y1; i = i + dy) {
+				if (r >= i - y_r) {
+					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= xk0 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= g02_x0)
+						size = size + 1;
+					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= xk0 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= g02_x0)
+						size = size + 1;
+				}
+			}
 		}
 	}
 	return size;
+}
+
+double** g02_ElMas (int size, double dx, double dy, double x1, double y1, double r, double x_r, double y_r) {
+	int kx0 = 0;
+	int kx1 = 0;
+	int ky0 = 0;
+	int ky1 = 0;
+	g02_area (dx, dy, x1, y1, r, x_r, y_r, &kx0, &kx1, &ky0, &ky1);
+	double xk0 = kx0 * dx;
+	double xk1 = kx1 * dx;
+	double yk0 = ky0 * dy;
+	double yk1 = ky1 * dy;
+	int i;
+	int k = 0;
+	double** arr = (double**)malloc(size*sizeof(double*));
+	for (i = 0; i < size; ++i) {
+		arr [i] = (double*)malloc(2*sizeof(double));
+	}
+	if (x1 == g02_x0) {
+		if (y1 > g02_y0) {
+			for (i = xk0; i <= x1; i = i + dx) {
+				if (r >= i - x_r) {
+					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= g02_y0 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= y1) {
+						arr [k][0] = i;
+						double tmp = sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r;
+						arr [k][1] = yk0;
+						while (tmp >= arr [k][1] + dy)
+							arr [k][1] += dy;
+						k = k + 1;
+					}
+					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= g02_y0 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= y1) {
+						arr [k][0] = i;
+						double tmp = -1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r;
+						arr [k][1] = yk0;
+						while (tmp >= arr [k][1] + dy)
+							arr [k][1] += dy;
+						k = k + 1;
+					}
+				}
+			}
+			double j;
+			if (yk0 == g02_y0)
+				j = yk0;
+			else
+				j = yk0 + dy;
+			for (i = j; i <= y1; i = i + dy) {
+				if (r >= i - y_r) {
+					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= xk0 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= x1) {
+						arr [k][1] = i;
+						double tmp = sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r;
+						arr [k][0] = xk0;
+						while (tmp >= arr [k][0] + dx)
+							arr [k][0] += dx;
+						k = k + 1;
+					}
+					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= xk0 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= x1) {
+						arr [k][1] = i;
+						double tmp = -1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r;
+						arr [k][0] = xk0;
+						while (tmp >= arr [k][0] + dx)
+							arr [k][0] += dx;
+						k = k + 1;
+					}
+				}
+			}
+		}
+		else {
+			double j;
+			if (xk0 == x1)
+				j = xk0;
+			else
+				j = xk0 + dx;
+			for (i = j; i <= xk1; i = i + dx) {
+				if (r >= i - x_r) {
+					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= y1 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= g02_y0) {
+						arr [k][0] = i;
+						double tmp = sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r;
+						arr [k][1] = yk0;
+						while (tmp >= arr [k][1] + dy)
+							arr [k][1] += dy;
+						k = k + 1;
+					}
+					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= y1 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= g02_y0) {
+						arr [k][0] = i;
+						double tmp = -1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r;
+						arr [k][1] = yk0;
+						while (tmp >= arr [k][1] + dy)
+							arr [k][1] += dy;
+						k = k + 1;
+					}
+				}
+			}
+			if (yk0 == y1)
+				j = yk0;
+			else
+				j = yk0 + dy;
+			for (i = j; i <= g02_y0; i = i + dy) {
+				if (r >= i - y_r) {
+					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= x1 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= xk1) {
+						arr [k][1] = i;
+						double tmp = sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r;
+						arr [k][0] = xk0;
+						while (tmp >= arr [k][0] + dx)
+							arr [k][0] += dx;
+						k = k + 1;
+					}
+					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= x1 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= xk1) {
+						arr [k][1] = i;
+						double tmp = -1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r;
+						arr [k][0] = xk0;
+						while (tmp >= arr [k][0] + dx)
+							arr [k][0] += dx;
+						k = k + 1;
+					}
+				}
+			}
+		}
+	}
+	else if (y1 == g02_y0) {
+		if (x1 > g02_x0) {
+			double j;
+			if (xk0 == g02_x0)
+				j = xk0;
+			else
+				j = xk0 + dx;
+			for (i = j; i <= x1; i = i + dx) {
+				if (r >= i - x_r) {
+					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= y1 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= yk1) {
+						arr [k][0] = i;
+						double tmp = sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r;
+						arr [k][1] = yk0;
+						while (tmp >= arr [k][1] + dy)
+							arr [k][1] += dy;
+						k = k + 1;
+					}
+					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= y1 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= yk1) {
+						arr [k][0] = i;
+						double tmp = -1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r;
+						arr [k][1] = yk0;
+						while (tmp >= arr [k][1] + dy)
+							arr [k][1] += dy;
+						k = k + 1;
+					}
+				}
+			}
+			if (yk0 == g02_y0)
+				j = yk0;
+			else
+				j = yk0 + dy;
+			for (i = j; i <= yk1; i = i + dy) {
+				if (r >= i - y_r) {
+					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= g02_x0 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= x1) {
+						arr [k][1] = i;
+						double tmp = sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r;
+						arr [k][0] = xk0;
+						while (tmp >= arr [k][0] + dx)
+							arr [k][0] += dx;
+						k = k + 1;
+					}
+					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= g02_x0 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= x1) {
+						arr [k][1] = i;
+						double tmp = -1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r;
+						arr [k][0] = xk0;
+						while (tmp >= arr [k][0] + dx)
+							arr [k][0] += dx;
+						k = k + 1;
+					}
+				}
+			}
+		}
+		else {
+			double j;
+			if (xk0 == x1)
+				j = xk0;
+			else
+				j = xk0 + dx;
+			for (i = j; i <= g02_x0; i = i + dx) {
+				if (r >= i - x_r) {
+					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= yk0 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= y1) {
+						arr [k][0] = i;
+						double tmp = sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r;
+						arr [k][1] = yk0;
+						while (tmp >= arr [k][1] + dy)
+							arr [k][1] += dy;
+						k = k + 1;
+					}
+					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= yk0 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= y1) {
+						arr [k][0] = i;
+						double tmp = -1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r;
+						arr [k][1] = yk0;
+						while (tmp >= arr [k][1] + dy)
+							arr [k][1] += dy;
+						k = k + 1;
+					}
+				}
+			}
+			for (i = yk0; i <= y1; i = i + dy) {
+				if (r >= i - y_r) {
+					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= x1 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= g02_x0) {
+						arr [k][1] = i;
+						double tmp = sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r;
+						arr [k][0] = xk0;
+						while (tmp >= arr [k][0] + dx)
+							arr [k][0] += dx;
+						k = k + 1;
+					}
+					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= x1 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= g02_x0) {
+						arr [k][1] = i;
+						double tmp = -1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r;
+						arr [k][0] = xk0;
+						while (tmp >= arr [k][0] + dx)
+							arr [k][0] += dx;
+						k = k + 1;
+					}
+				}
+			}			
+		}
+	}
+	else if (x1 > g02_x0) {
+		if (y1 > g02_y0) {
+			for (i = xk0; i <= x1; i = i + dx) {
+				if (r >= i - x_r) {
+					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= g02_y0 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= yk1) {
+						arr [k][0] = i;
+						double tmp = sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r;
+						arr [k][1] = yk0;
+						while (tmp >= arr [k][1] + dy)
+							arr [k][1] += dy;
+						k = k + 1;
+					}
+					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= g02_y0 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= yk1) {
+						arr [k][0] = i;
+						double tmp = -1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r;
+						arr [k][1] = yk0;
+						while (tmp >= arr [k][1] + dy)
+							arr [k][1] += dy;
+						k = k + 1;
+					}
+				}
+			}
+			double j;
+			if (yk0 == g02_y0)
+				j = yk0;
+			else
+				j = yk0 + dy;
+			for (i = j; i <= yk1; i = i + dy) {
+				if (r >= i - y_r) {
+					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= xk0 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= x1) {
+						arr [k][1] = i;
+						double tmp = sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r;
+						arr [k][0] = xk0;
+						while (tmp >= arr [k][0] + dx)
+							arr [k][0] += dx;
+						k = k + 1;
+					}
+					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= xk0 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= x1) {
+						arr [k][1] = i;
+						double tmp = -1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r;
+						arr [k][0] = xk0;
+						while (tmp >= arr [k][0] + dx)
+							arr [k][0] += dx;
+						k = k + 1;
+					}
+				}
+			}			
+		}
+		else {
+			double j;
+			if (xk0 == g02_x0)
+				j = xk0;
+			else
+				j = xk0 + dx;
+			for (i = j; i <= xk1; i = i + dx) {
+				if (r >= i - x_r) {
+					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= y1 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= yk1) {
+						arr [k][0] = i;
+						double tmp = sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r;
+						arr [k][1] = yk0;
+						while (tmp >= arr [k][1] + dy)
+							arr [k][1] += dy;
+						k = k + 1;
+					}
+					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= y1 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= yk1) {
+						arr [k][0] = i;
+						double tmp = -1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r;
+						arr [k][1] = yk0;
+						while (tmp >= arr [k][1] + dy)
+							arr [k][1] += dy;
+						k = k + 1;
+					}
+				}
+			}
+			if (yk0 == y1)
+				j = yk0;
+			else
+				j = yk0 + dy;
+			for (i = j; i <= yk1; i = i + dy) {
+				if (r >= i - y_r) {
+					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= g02_x0 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= kx1) {
+						arr [k][1] = i;
+						double tmp = sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r;
+						arr [k][0] = xk0;
+						while (tmp >= arr [k][0] + dx)
+							arr [k][0] += dx;
+						k = k + 1;
+					}
+					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= g02_x0 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= kx1) {
+						arr [k][0] = i;
+						double tmp = -1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r;
+						arr [k][0] = xk0;
+						while (tmp >= arr [k][0] + dx)
+							arr [k][0] += dx;
+						k = k + 1;
+					}
+				}
+			}							
+		}
+	}
+	else {
+		if (y1 < g02_y0) {
+			double j;
+			if (xk0 == x1)
+				j = xk0;
+			else
+				j = xk0 + dx;
+			for (i = j; i <= xk1; i = i + dx) {
+				if (r >= i - x_r) {
+					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= yk0 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= g02_y0) {
+						arr [k][0] = i;
+						double tmp = sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r;
+						arr [k][1] = yk0;
+						while (tmp >= arr [k][1] + dy)
+							arr [k][1] += dy;
+						k = k + 1;
+					}
+					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= yk0 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= g02_y0) {
+						arr [k][0] = i;
+						double tmp = -1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r;
+						arr [k][1] = yk0;
+						while (tmp >= arr [k][1] + dy)
+							arr [k][1] += dy;
+						k = k + 1;
+					}
+				}
+			}
+			for (i = yk0; i <= g02_y0; i = i + dy) {
+				if (r >= i - y_r) {
+					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= x1 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= kx1) {
+						arr [k][1] = i;
+						double tmp = sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r;
+						arr [k][0] = xk0;
+						while (tmp >= arr [k][0] + dx)
+							arr [k][0] += dx;
+						k = k + 1;
+					}
+					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= x1 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= kx1) {
+						arr [k][0] = i;
+						double tmp = -1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r;
+						arr [k][0] = xk0;
+						while (tmp >= arr [k][0] + dx)
+							arr [k][0] += dx;
+						k = k + 1;
+					}
+				}
+			}
+		}
+		else {
+			for (i = xk0; i <= g02_x0; i = i + dx) {
+				if (r >= i - x_r) {
+					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= yk0 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= y1) {
+						arr [k][0] = i;
+						double tmp = sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r;
+						arr [k][1] = yk0;
+						while (tmp >= arr [k][1] + dy)
+							arr [k][1] += dy;
+						k = k + 1;
+					}
+					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= yk0 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= y1) {
+						arr [k][0] = i;
+						double tmp = -1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r;
+						arr [k][1] = yk0;
+						while (tmp >= arr [k][1] + dy)
+							arr [k][1] += dy;
+						k = k + 1;
+					}
+				}
+			}
+			for (i = yk0; i <= y1; i = i + dy) {
+				if (r >= i - y_r) {
+					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= xk0 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= g02_x0) {
+						arr [k][1] = i;
+						double tmp = sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r;
+						arr [k][0] = xk0;
+						while (tmp >= arr [k][0] + dx)
+							arr [k][0] += dx;
+						k = k + 1;
+					}
+					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= xk0 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= g02_x0) {
+						arr [k][0] = i;
+						double tmp = -1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r;
+						arr [k][0] = xk0;
+						while (tmp >= arr [k][0] + dx)
+							arr [k][0] += dx;
+						k = k + 1;
+					}
+				}
+			}
+		}
+	}
+	return arr;
+}
+
+void g02_offset (double** arr, int* size) {
+	int i, j, k;
+	for (i = 0; i < *size; ++i)
+		for (j = i + 1; j < *size; ++j)
+			if (arr [i][0] == arr [j][0] && arr [i][1] == arr [j][1]) {
+				*size = *size - 1;
+				for (k = j; k < *size; ++k) {
+					arr [k][0] = arr [k + 1][0];
+					arr [k][1] = arr [k + 1][1];
+				}
+				j = j - 1;
+			}
 }
 
