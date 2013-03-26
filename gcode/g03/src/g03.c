@@ -1,7 +1,7 @@
 #include"../inc/g03.h"
 
 double g03_x0 = 3.2;
-double g03_y0 = 4.3;
+double g03_y0 = 2.3;
 
 extern void g03_enter_point (double x1, double y1, double r, double f)
 {
@@ -35,6 +35,9 @@ extern void g03_enter_point (double x1, double y1, double r, double f)
 		arr1 [i][0] = arr [i][0];
 		arr1 [i][1] = arr [i][1];
 	}
+	
+	g03_sort (arr1, size1, x1, y1);
+	
 	for (i = 0; i < size; ++i) {
 		printf ("(%f, %f)\n", arr1[i][0], arr1[i][1]);
 	}
@@ -920,3 +923,82 @@ void g03_offset (double** arr, int* size) {
 			}
 }
 
+void g03_sort (double** arr, int size, double x1, double y1) {
+	int i, j;
+	if (x1 == g03_x0) {
+		if (y1 > g03_y0) {
+			for (i = 0; i < size; ++i) {
+				for (j = i + 1; j < size; ++j) {
+					if (arr [i][1] > arr [j][1]) {
+						double tmp = arr [i][1];
+						arr [i][1] = arr [j][1];
+						arr [j][1] = tmp;
+						tmp = arr [i][0];
+						arr [i][0] = arr [j][0];
+						arr [j][0] = tmp;
+					}
+				}
+			}
+		}
+		else {
+			for (i = 0; i < size; ++i) {
+				for (j = i + 1; j < size; ++j) {
+					if (arr [i][1] < arr [j][1]) {
+						double tmp = arr [i][1];
+						arr [i][1] = arr [j][1];
+						arr [j][1] = tmp;
+						tmp = arr [i][0];
+						arr [i][0] = arr [j][0];
+						arr [j][0] = tmp;
+					}
+				}
+			}
+		}
+	}
+	else if (y1 == g03_y0) {
+		if (x1 > g03_x0) {
+			for (i = 0; i < size; ++i) {
+				for (j = i + 1; j < size; ++j) {
+					if (arr [i][0] > arr [j][0]) {
+						double tmp = arr [i][0];
+						arr [i][0] = arr [j][0];
+						arr [j][0] = tmp;
+						tmp = arr [i][1];
+						arr [i][1] = arr [j][1];
+						arr [j][1] = tmp;
+					}
+				}
+			}
+		}
+		else {
+			for (i = 0; i < size; ++i) {
+				for (j = i + 1; j < size; ++j) {
+					if (arr [i][0] < arr [j][0]) {
+						double tmp = arr [i][0];
+						arr [i][0] = arr [j][0];
+						arr [j][0] = tmp;
+						tmp = arr [i][1];
+						arr [i][1] = arr [j][1];
+						arr [j][1] = tmp;
+					}
+				}
+			}
+		}
+	}
+	else if (x1 > g03_x0) {
+		if (y1 > g03_y0) {
+			
+		}
+		else {
+				
+		}
+	}
+	else {
+		if (y1 < g03_y0) {
+			
+		}
+		else {
+			
+		}
+	}
+}
