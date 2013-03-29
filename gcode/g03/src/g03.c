@@ -14,11 +14,9 @@ extern void g03_enter_point (double x1, double y1, double r, double f)
 	int size, size1;
 	int i;
 	
-	g03_centerCircle (x1, y1, r, &x_r, &y_r);
+	g03_centerCircle (x1, y1, r, &x_r, &y_r); /*Нахождение центра дуги окружности*/
 	
-	//printf ("g03: (%f, %f)\n", x_r, y_r);
-	
-	size = g03_size (dx, dy, x1, y1, r, x_r, y_r);
+	size = g03_size (dx, dy, x1, y1, r, x_r, y_r); /*Нахождение размера массива точек пересечения с сеткой*/
 	printf ("%d\n", size);
 	
 	arr = (double**)malloc(size*sizeof(double*));
@@ -27,7 +25,7 @@ extern void g03_enter_point (double x1, double y1, double r, double f)
 	
 	arr = g03_ElMas(size, dx, dy, x1, y1, r, x_r, y_r);
 	size1 = size;
-	g03_offset(arr, &size1);
+	g03_offset(arr, &size1); /*Исключение из массива точек одинаковых элементов*/
 	arr1 = (double**)malloc(size1*sizeof(double*));
 	for (i = 0; i < size1; ++i)
 		arr1 [i] = (double*)malloc(2*sizeof(double));
@@ -36,7 +34,7 @@ extern void g03_enter_point (double x1, double y1, double r, double f)
 		arr1 [i][1] = arr [i][1];
 	}
 	
-	g03_sort (arr1, size1, x1, y1);
+	g03_sort (arr1, size1, x1, y1); /*Сортировка массива точек*/
 	
 	for (i = 0; i < size; ++i) {
 		printf ("(%f, %f)\n", arr1[i][0], arr1[i][1]);
@@ -289,7 +287,7 @@ int g03_size (double dx, double dy, double x1, double y1, double r, double x_r, 
 	int kx1 = 0;
 	int ky0 = 0;
 	int ky1 = 0;
-	g03_area (dx, dy, x1, y1, r, x_r, y_r, &kx0, &kx1, &ky0, &ky1);
+	g03_area (dx, dy, x1, y1, r, x_r, y_r, &kx0, &kx1, &ky0, &ky1); /*Нахождение прямоугольной области, в которой находится дуга*/
 	double xk0 = kx0 * dx;
 	double xk1 = kx1 * dx;
 	double yk0 = ky0 * dy;
@@ -504,7 +502,7 @@ double** g03_ElMas (int size, double dx, double dy, double x1, double y1, double
 	int kx1 = 0;
 	int ky0 = 0;
 	int ky1 = 0;
-	g03_area (dx, dy, x1, y1, r, x_r, y_r, &kx0, &kx1, &ky0, &ky1);
+	g03_area (dx, dy, x1, y1, r, x_r, y_r, &kx0, &kx1, &ky0, &ky1); /*Нахождение прямоугольной области, в которой находится дуга*/
 	double xk0 = kx0 * dx;
 	double xk1 = kx1 * dx;
 	double yk0 = ky0 * dy;

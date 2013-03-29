@@ -4,24 +4,20 @@
 double x0 = 0;
 double Y0 = 0;
 double z0 = 0;
-// TODO: implement f calculation
-double f0 = 0;
 
-extern void g01_enter_point (double x1, double y1, double z1, double f)
-{
+void g01_enter_point (double x1, double y1, double z1, double f) {
 	int i, j;
 	const double dx = 1.0;
 	const double dy = 1.0;
 	const double dz = 1.0;
-	int size;
+	int size; /* Размер массива */
 	double** arr;
-	double** arrCoord;
-	double** arrCoordVertice;
+	double** arrCoord; /* Массив точек*/
+	double** arrCoordVertice; /* Массив координат вершин*/
 	int index = 1;
-	size = sizeArr (x0, Y0, z0, x1, y1, z1, dx, dy, dz);
+	size = sizeArr (x0, Y0, z0, x1, y1, z1, dx, dy, dz); /* Нахождение размера массива точек пересечения прямой с сеткой*/
 	arr = (double**)malloc(size*sizeof(double*));
-	for (i = 0; i < size; ++i)
-	{
+	for (i = 0; i < size; ++i) {
 		arr [i] = (double*)malloc(3*sizeof(double));
 	}
 	arr [0][0] = x0;
@@ -30,69 +26,59 @@ extern void g01_enter_point (double x1, double y1, double z1, double f)
 	arr [size - 1][0] = x1;
 	arr [size - 1][1] = y1;
 	arr [size - 1][2] = z1;
+ 	/* Получение массива точек пересечения с сеткой*/
 	filling (arr, &index, dx, 'x', size);
 	filling (arr, &index, dy, 'y', size);
 	filling (arr, &index, dz, 'z', size);
-	if (x0 != x1)
-	{
-		sort (arr, size, 'x');
+	if (x0 != x1) {
+		sort (arr, size, 'x'); /* Сортировка массива точек по координате 'x'*/
 	}
-	else 
-		if (Y0 != y1)
-		{
-			sort (arr, size, 'y');
-		}
+	else if (Y0 != y1) {
+		sort (arr, size, 'y'); /* Сортировка массива точек по координате 'y'*/
+	}
 	int tmpSize = size;
-	offset (arr, &size);
+	offset (arr, &size); /* Удаление из массива одинаковых точек*/
 	arrCoord = (double**)malloc(size*sizeof(double*));
-	for (i = 0; i < size; ++i)
-	{
+	for (i = 0; i < size; ++i) {
 		arrCoord [i] = (double*)malloc(3*sizeof(double));
 	}
-	for (i = 0; i < size; ++i)
-	{
-		for (j = 0; j < 3; ++j)
-		{
+	for (i = 0; i < size; ++i) {
+		for (j = 0; j < 3; ++j) {
 			arrCoord [i][j] = arr [i][j];
 		}
 	}
-	coordVertice (arrCoord, size, dx, dy, dz);
+	coordVertice (arrCoord, size, dx, dy, dz); /* Массив точек прямой по сетке*/
 	int tmpSizeCoord = size;
-	offset (arrCoord, &size);
+	offset (arrCoord, &size); /* Удаление из массива одинаковых точек*/
 	arrCoordVertice = (double**)malloc(size*sizeof(double*));
-	for (i = 0; i < size; ++i)
-	{
+	for (i = 0; i < size; ++i) {
 		arrCoordVertice [i] = (double*)malloc(3*sizeof(double));
 	}
-	printf ("(%f, %f, %f) (%f, %f, %f)\n", x0, Y0, z0, x1, y1, z1);
-	for (i = 0; i < tmpSize; ++i)
-	{
+	printf ("\n");
+	for (i = 0; i < size; ++i) {
+		printf ("(%f, %f, %f)\n", arrCoord [i][0], arrCoord [i][1], arrCoord [i][2]);
+	}
+	for (i = 0; i < tmpSize; ++i) {
 		free (arr [i]);
 	}
 	free (arr);
-	for (i = 0; i < tmpSizeCoord; ++i)
-	{
+	for (i = 0; i < tmpSizeCoord; ++i) {
 		free (arrCoord [i]);
 	}
 	free (arrCoord);
-	for (i = 0; i < size; ++i)
-	{
+	for (i = 0; i < size; ++i) {
 		free (arrCoordVertice [i]);
 	}
 	free (arrCoordVertice);
 	x0 = x1;
 	Y0 = y1;
 	z0 = z1;
-	
-	// handle result
-	if(handler_gcommand_result)
-	    handler_gcommand_result(x0, Y0, z0, f0);
 }
 
-int sizeArr (double x0, double y0, double z0, double x1, double y1, double z1, const double dx, const double dy, const double dz) {
+int sizeArr (double x0, double Y0, double z0, double x1, double y1, double z1, const double dx, const double dy, const double dz) {
 	int size = 2;
 	u (&size, x0, x1, dx);
-	u (&size, y0, y1, dy);
+	u (&size, Y0, y1, dy);
 	u (&size, z0, z1, dz);
 	return size;
 }
