@@ -1,7 +1,7 @@
 #include"../inc/g02.h"
 
-double g02_x0 = 3.2;
-double g02_y0 = 4.3;
+double g02_x0 = 0;
+double g02_y0 = 0;
 
 extern void g02_enter_point (double x1, double y1, double r, double f)
 {
@@ -34,7 +34,7 @@ extern void g02_enter_point (double x1, double y1, double r, double f)
 		arr1 [i][1] = arr [i][1];
 	}
 	g02_sort (arr1, size1, x1, y1); /*Сортировка массива точек*/
-	for (i = 0; i < size; ++i) {
+	for (i = 0; i < size1; ++i) {
 		printf ("(%f, %f)\n", arr1[i][0], arr1[i][1]);
 	}
 	
@@ -911,10 +911,8 @@ void g02_offset (double** arr, int* size) {
 		for (j = i + 1; j < *size; ++j)
 			if (arr [i][0] == arr [j][0] && arr [i][1] == arr [j][1]) {
 				*size = *size - 1;
-				for (k = j; k < *size; ++k) {
-					arr [k][0] = arr [k + 1][0];
-					arr [k][1] = arr [k + 1][1];
-				}
+				arr [j][0] = arr [*size][0];
+				arr [j][1] = arr [*size][1];
 				j = j - 1;
 			}
 }
@@ -982,19 +980,137 @@ void g02_sort (double** arr, int size, double x1, double y1) {
 		}
 	}
 	else if (x1 > g02_x0) {
+		int ind = -1;
 		if (y1 > g02_y0) {
-			
+			for (i = 0; i < size; ++i) {
+				for (j = i + 1; j < size; ++j) {
+					if (arr [i][1] > arr [j][1]) {
+						double tmp = arr [i][1];
+						arr [i][1] = arr [j][1];
+						arr [j][1] = tmp;
+						tmp = arr [i][0];
+						arr [i][0] = arr [j][0];
+						arr [j][0] = tmp;
+					}
+				}
+			}
+			for (i = 0; i < size; ++i)
+				if (g02_x0 < arr [i][0]) {
+						ind = i;
+						break;
+				}
+			if (ind != -1)
+				for (i = ind; i < size; ++i) {
+					for (j = i + 1; j < size; ++j) {
+						if (arr [i][0] > arr [j][0]) {
+							double tmp = arr [i][0];
+							arr [i][0] = arr [j][0];
+							arr [j][0] = tmp;
+							tmp = arr [i][1];
+							arr [i][1] = arr [j][1];
+							arr [j][1] = tmp;
+						}
+					}
+				}			
 		}
 		else {
-				
+			for (i = 0; i < size; ++i) {
+				for (j = i + 1; j < size; ++j) {
+					if (arr [i][0] > arr [j][0]) {
+						double tmp = arr [i][0];
+						arr [i][0] = arr [j][0];
+						arr [j][0] = tmp;
+						tmp = arr [i][1];
+						arr [i][1] = arr [j][1];
+						arr [j][1] = tmp;
+					}
+				}
+			}
+			for (i = 0; i < size; ++i)
+				if (g02_y0 > arr [i][1]) {
+						ind = i;
+						break;
+				}
+			if (ind != -1)
+				for (i = ind; i < size; ++i) {
+					for (j = i + 1; j < size; ++j) {
+						if (arr [i][1] < arr [j][1]) {
+							double tmp = arr [i][1];
+							arr [i][1] = arr [j][1];
+							arr [j][1] = tmp;
+							tmp = arr [i][0];
+							arr [i][0] = arr [j][0];
+							arr [j][0] = tmp;
+						}
+					}
+				}
 		}
 	}
 	else {
+		int ind = -1;
 		if (y1 < g02_y0) {
-			
+			for (i = 0; i < size; ++i) {
+				for (j = i + 1; j < size; ++j) {
+					if (arr [i][1] < arr [j][1]) {
+						double tmp = arr [i][1];
+						arr [i][1] = arr [j][1];
+						arr [j][1] = tmp;
+						tmp = arr [i][0];
+						arr [i][0] = arr [j][0];
+						arr [j][0] = tmp;
+					}
+				}
+			}
+			for (i = 0; i < size; ++i)
+				if (g02_x0 > arr [i][0]) {
+						ind = i;
+						break;
+				}
+			if (ind != -1)
+				for (i = ind; i < size; ++i) {
+					for (j = i + 1; j < size; ++j) {
+						if (arr [i][0] < arr [j][0]) {
+							double tmp = arr [i][0];
+							arr [i][0] = arr [j][0];
+							arr [j][0] = tmp;
+							tmp = arr [i][1];
+							arr [i][1] = arr [j][1];
+							arr [j][1] = tmp;
+						}
+					}
+				}			
 		}
 		else {
-			
+			for (i = 0; i < size; ++i) {
+				for (j = i + 1; j < size; ++j) {
+					if (arr [i][0] < arr [j][0]) {
+						double tmp = arr [i][0];
+						arr [i][0] = arr [j][0];
+						arr [j][0] = tmp;
+						tmp = arr [i][1];
+						arr [i][1] = arr [j][1];
+						arr [j][1] = tmp;
+					}
+				}
+			}
+			for (i = 0; i < size; ++i)
+				if (g02_y0 < arr [i][1]) {
+						ind = i;
+						break;
+				}
+			if (ind != -1)
+				for (i = ind; i < size; ++i) {
+					for (j = i + 1; j < size; ++j) {
+						if (arr [i][1] < arr [j][1]) {
+							double tmp = arr [i][1];
+							arr [i][1] = arr [j][1];
+							arr [j][1] = tmp;
+							tmp = arr [i][0];
+							arr [i][0] = arr [j][0];
+							arr [j][0] = tmp;
+						}
+					}
+				}
 		}
 	}
 }

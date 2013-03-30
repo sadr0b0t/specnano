@@ -1,7 +1,7 @@
 #include"../inc/g03.h"
 
-double g03_x0 = 3.2;
-double g03_y0 = 2.3;
+double g03_x0 = 0;
+double g03_y0 = 0;
 
 extern void g03_enter_point (double x1, double y1, double r, double f)
 {
@@ -26,6 +26,7 @@ extern void g03_enter_point (double x1, double y1, double r, double f)
 	arr = g03_ElMas(size, dx, dy, x1, y1, r, x_r, y_r);
 	size1 = size;
 	g03_offset(arr, &size1); /*Исключение из массива точек одинаковых элементов*/
+	
 	arr1 = (double**)malloc(size1*sizeof(double*));
 	for (i = 0; i < size1; ++i)
 		arr1 [i] = (double*)malloc(2*sizeof(double));
@@ -36,7 +37,7 @@ extern void g03_enter_point (double x1, double y1, double r, double f)
 	
 	g03_sort (arr1, size1, x1, y1); /*Сортировка массива точек*/
 	
-	for (i = 0; i < size; ++i) {
+	for (i = 0; i < size1; ++i) {
 		printf ("(%f, %f)\n", arr1[i][0], arr1[i][1]);
 	}
 	
@@ -909,16 +910,15 @@ double** g03_ElMas (int size, double dx, double dy, double x1, double y1, double
 
 void g03_offset (double** arr, int* size) {
 	int i, j, k;
-	for (i = 0; i < *size; ++i)
+	for (i = 0; i < *size; ++i) {
 		for (j = i + 1; j < *size; ++j)
 			if (arr [i][0] == arr [j][0] && arr [i][1] == arr [j][1]) {
 				*size = *size - 1;
-				for (k = j; k < *size; ++k) {
-					arr [k][0] = arr [k + 1][0];
-					arr [k][1] = arr [k + 1][1];
-				}
+				arr [j][0] = arr [*size][0];
+				arr [j][1] = arr [*size][1];
 				j = j - 1;
 			}
+	}
 }
 
 void g03_sort (double** arr, int size, double x1, double y1) {
@@ -984,19 +984,137 @@ void g03_sort (double** arr, int size, double x1, double y1) {
 		}
 	}
 	else if (x1 > g03_x0) {
+		int ind = -1;
 		if (y1 > g03_y0) {
-			
+			for (i = 0; i < size; ++i) {
+				for (j = i + 1; j < size; ++j) {
+					if (arr [i][0] > arr [j][0]) {
+						double tmp = arr [i][0];
+						arr [i][0] = arr [j][0];
+						arr [j][0] = tmp;
+						tmp = arr [i][1];
+						arr [i][1] = arr [j][1];
+						arr [j][1] = tmp;
+					}
+				}
+			}
+			for (i = 0; i < size; ++i)
+				if (g03_y0 < arr [i][1]) {
+						ind = i;
+						break;
+				}
+			if (ind != -1)
+				for (i = ind; i < size; ++i) {
+					for (j = i + 1; j < size; ++j) {
+						if (arr [i][1] > arr [j][1]) {
+							double tmp = arr [i][1];
+							arr [i][1] = arr [j][1];
+							arr [j][1] = tmp;
+							tmp = arr [i][0];
+							arr [i][0] = arr [j][0];
+							arr [j][0] = tmp;
+						}
+					}
+				}
 		}
 		else {
-				
+			for (i = 0; i < size; ++i) {
+				for (j = i + 1; j < size; ++j) {
+					if (arr [i][1] < arr [j][1]) {
+						double tmp = arr [i][1];
+						arr [i][1] = arr [j][1];
+						arr [j][1] = tmp;
+						tmp = arr [i][0];
+						arr [i][0] = arr [j][0];
+						arr [j][0] = tmp;
+					}
+				}
+			}
+			for (i = 0; i < size; ++i)
+				if (g03_x0 < arr [i][0]) {
+						ind = i;
+						break;
+				}
+			if (ind != -1)
+				for (i = ind; i < size; ++i) {
+					for (j = i + 1; j < size; ++j) {
+						if (arr [i][0] > arr [j][0]) {
+							double tmp = arr [i][0];
+							arr [i][0] = arr [j][0];
+							arr [j][0] = tmp;
+							tmp = arr [i][1];
+							arr [i][1] = arr [j][1];
+							arr [j][1] = tmp;
+						}
+					}
+				}	
 		}
 	}
 	else {
+		int ind = -1;
 		if (y1 < g03_y0) {
-			
+			for (i = 0; i < size; ++i) {
+				for (j = i + 1; j < size; ++j) {
+					if (arr [i][0] < arr [j][0]) {
+						double tmp = arr [i][0];
+						arr [i][0] = arr [j][0];
+						arr [j][0] = tmp;
+						tmp = arr [i][1];
+						arr [i][1] = arr [j][1];
+						arr [j][1] = tmp;
+					}
+				}
+			}
+			for (i = 0; i < size; ++i)
+				if (g03_y0 > arr [i][1]) {
+						ind = i;
+						break;
+				}
+			if (ind != -1)
+				for (i = ind; i < size; ++i) {
+					for (j = i + 1; j < size; ++j) {
+						if (arr [i][1] < arr [j][1]) {
+							double tmp = arr [i][1];
+							arr [i][1] = arr [j][1];
+							arr [j][1] = tmp;
+							tmp = arr [i][0];
+							arr [i][0] = arr [j][0];
+							arr [j][0] = tmp;
+						}
+					}
+				}
 		}
 		else {
-			
+			for (i = 0; i < size; ++i) {
+				for (j = i + 1; j < size; ++j) {
+					if (arr [i][1] > arr [j][1]) {
+						double tmp = arr [i][1];
+						arr [i][1] = arr [j][1];
+						arr [j][1] = tmp;
+						tmp = arr [i][0];
+						arr [i][0] = arr [j][0];
+						arr [j][0] = tmp;
+					}
+				}
+			}
+			for (i = 0; i < size; ++i)
+				if (g03_x0 > arr [i][0]) {
+						ind = i;
+						break;
+				}
+			if (ind != -1)
+				for (i = ind; i < size; ++i) {
+					for (j = i + 1; j < size; ++j) {
+						if (arr [i][0] < arr [j][0]) {
+							double tmp = arr [i][0];
+							arr [i][0] = arr [j][0];
+							arr [j][0] = tmp;
+							tmp = arr [i][1];
+							arr [i][1] = arr [j][1];
+							arr [j][1] = tmp;
+						}
+					}
+				}
 		}
 	}
 }
