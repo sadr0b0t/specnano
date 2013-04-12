@@ -54,10 +54,10 @@ void g01_enter_point (double x1, double y1, double z1, double f) {
 	for (i = 0; i < size; ++i) {
 		arrCoordVertice [i] = (double*)malloc(3*sizeof(double));
 	}
-	printf ("\n");
+	/*printf ("\n");
 	for (i = 0; i < size; ++i) {
 		printf ("(%f, %f, %f)\n", arrCoord [i][0], arrCoord [i][1], arrCoord [i][2]);
-	}
+	}*/
 	for (i = 0; i < tmpSize; ++i) {
 		free (arr [i]);
 	}
@@ -73,6 +73,9 @@ void g01_enter_point (double x1, double y1, double z1, double f) {
 	x0 = x1;
 	Y0 = y1;
 	z0 = z1;
+	/*handle result*/
+	if (handler_gcommand_result)
+		handler_gcommand_result (x0, Y0, z0, f);
 }
 
 int sizeArr (double x0, double Y0, double z0, double x1, double y1, double z1, const double dx, const double dy, const double dz) {

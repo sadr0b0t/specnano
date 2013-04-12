@@ -1,4 +1,5 @@
 #include"../inc/g03.h"
+#include"../../inc/gcode.h"
 
 double g03_x0 = 0;
 double g03_y0 = 0;
@@ -37,9 +38,9 @@ extern void g03_enter_point (double x1, double y1, double r, double f)
 	
 	g03_sort (arr1, size1, x1, y1); /*Сортировка массива точек*/
 	
-	for (i = 0; i < size1; ++i) {
+	/*for (i = 0; i < size1; ++i) {
 		printf ("(%f, %f)\n", arr1[i][0], arr1[i][1]);
-	}
+	}*/
 	
 	for (i = 0; i < size; ++i) {
 		free (arr [i]);
@@ -52,6 +53,10 @@ extern void g03_enter_point (double x1, double y1, double r, double f)
 	
 	g03_x0 = x1;
 	g03_y0 = y1;
+
+	/*handle result*/
+	if (handler_gcommand_result)
+		handler_gcommand_result (g03_x0, g03_y0, 0, f);
 }
 
 void g03_centerCircle (double x1, double y1, double r, double* x_r, double* y_r) {

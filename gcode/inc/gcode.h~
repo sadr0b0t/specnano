@@ -80,4 +80,3 @@ int (*handler_g03)(int*, double, double, double, double, double);
 
 /* Result handler delegate for all g-commands */
 int (*handler_gcommand_result)(double dx, double dy, double dz, double f);
-

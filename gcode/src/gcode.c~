@@ -45,7 +45,7 @@ extern void GCommands()
 			break;
 		case GCode_G03:
 			if(handler_g03)
-		        catchError(handler_g03(setFlags, x, y, z, F, R), ERROR_CODE_G02, "");
+		        catchError(handler_g02(setFlags, x, y, z, F, R), ERROR_CODE_G02, "");
 			break;
 		case GCode_G04:
 			catchError(gcode_g04(setFlags), ERROR_CODE_G04, "");

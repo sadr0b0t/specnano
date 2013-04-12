@@ -1,5 +1,4 @@
 #include"../inc/g02.h"
-#include"../../inc/gcode.h"
 
 double g02_x0 = 0;
 double g02_y0 = 0;
