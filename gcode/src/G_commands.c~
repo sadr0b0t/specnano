@@ -43,7 +43,7 @@ extern int gcode_g03(int* _f, double x, double y, double z, double f, double r)
 	flags=_f;
 	if(!(flags[0] && flags[8] && flags_calc(2)))
 		return 1;
-	g02_enter_point(x, y, r, f);
+	g03_enter_point(x, y, r, f);
 	/*printf("G03: X%f Y%f Z%f R%f F%f\n", x, y, z, r, f);*/
 	return 0;
 }
