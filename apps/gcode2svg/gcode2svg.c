@@ -21,7 +21,8 @@ int gcode2svg(char* file_path) {
 	f=fopen(file_path, "r");
 
 	int i;
-	for(i=0; i<5; i++)
+	/*for(i=0; i<5; i++)*/
+	while (1)
 		if(file_processing(f))
 			return 0;
 }

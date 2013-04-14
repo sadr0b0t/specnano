@@ -1,8 +1,6 @@
 #include"../inc/g03.h"
 #include"../../inc/gcode.h"
-
-double g03_x0 = 0;
-double g03_y0 = 0;
+#include"../../inc/g.h"
 
 extern void g03_enter_point (double x1, double y1, double r, double f)
 {
@@ -18,7 +16,6 @@ extern void g03_enter_point (double x1, double y1, double r, double f)
 	g03_centerCircle (x1, y1, r, &x_r, &y_r); /*Нахождение центра дуги окружности*/
 	
 	size = g03_size (dx, dy, x1, y1, r, x_r, y_r); /*Нахождение размера массива точек пересечения с сеткой*/
-	printf ("%d\n", size);
 	
 	arr = (double**)malloc(size*sizeof(double*));
 	for (i = 0; i < size; ++i)
@@ -38,9 +35,9 @@ extern void g03_enter_point (double x1, double y1, double r, double f)
 	
 	g03_sort (arr1, size1, x1, y1); /*Сортировка массива точек*/
 	
-	/*for (i = 0; i < size1; ++i) {
+	for (i = 0; i < size1; ++i) {
 		printf ("(%f, %f)\n", arr1[i][0], arr1[i][1]);
-	}*/
+	}
 	
 	for (i = 0; i < size; ++i) {
 		free (arr [i]);
@@ -51,25 +48,24 @@ extern void g03_enter_point (double x1, double y1, double r, double f)
 	}
 	free (arr1);
 	
-	g03_x0 = x1;
-	g03_y0 = y1;
-
+	g_x0 = x1;
+	g_y0 = y1;
 	/*handle result*/
 	if (handler_gcommand_result)
-		handler_gcommand_result (g03_x0, g03_y0, 0, f);
+		handler_gcommand_result (g_x0, g_y0, 0, f);
 }
 
 void g03_centerCircle (double x1, double y1, double r, double* x_r, double* y_r) {
-	if (x1 == g03_x0) {
-		*y_r = (y1 + g03_y0) / 2;
-		if (y1 > g03_y0)
+	if (x1 == g_x0) {
+		*y_r = (y1 + g_y0) / 2;
+		if (y1 > g_y0)
 			*x_r = -1 * sqrt(pow(r, 2) - pow(*y_r - y1, 2)) + x1;
 		else
 			*x_r = sqrt(pow(r, 2) - pow(*y_r - y1, 2)) + x1;
 	}
-	else if (y1 == g03_y0) {
-		*x_r = (x1 + g03_x0) / 2;
-		if (x1 > g03_x0)
+	else if (y1 == g_y0) {
+		*x_r = (x1 + g_x0) / 2;
+		if (x1 > g_x0)
 			*y_r = sqrt(pow(r, 2) - pow(*x_r - x1, 2)) + y1;
 		else
 			*y_r = -1 * sqrt(pow(r, 2) - pow(*x_r - x1, 2)) + y1;		
@@ -77,13 +73,13 @@ void g03_centerCircle (double x1, double y1, double r, double* x_r, double* y_r)
 	else {
 		double x0, y0, k;
 		double a, b, c;
-		x0 = (x1 + g03_x0) / 2;
-		y0 = (y1 + g03_y0) / 2;
-		k = -1 * (x1 - g03_x0) / (y1 - g03_y0);
+		x0 = (x1 + g_x0) / 2;
+		y0 = (y1 + g_y0) / 2;
+		k = -1 * (x1 - g_x0) / (y1 - g_y0);
 		a = pow(k, 2) + 1;
 		b = -2 * k * (k*x0 - y0 + y1) - 2 * x1;
 		c = pow(x1, 2) + pow(k*x0 - y0 + y1, 2) - pow(r, 2);
-		if (x1 > g03_x0 && y1 < g03_y0 || x1 < g03_x0 & y1 < g03_y0)
+		if (x1 > g_x0 && y1 < g_y0 || x1 < g_x0 & y1 < g_y0)
 			*x_r = (-1 * b + sqrt(pow(b, 2) - 4 * a * c)) / (2 * a);
 		else
 			*x_r = (-1 * b - sqrt(pow(b, 2) - 4 * a * c)) / (2 * a);
@@ -92,9 +88,9 @@ void g03_centerCircle (double x1, double y1, double r, double* x_r, double* y_r)
 }
 
 void g03_area (double dx, double dy, double x1, double y1, double r, double x_r, double y_r, int* kx0, int* kx1, int* ky0, int* ky1) {
-	if (x1 == g03_x0) {
-		if (y1 > g03_y0) {
-			while (g03_y0 >= *ky0 + dy) {
+	if (x1 == g_x0) {
+		if (y1 > g_y0) {
+			while (g_y0 >= *ky0 + dy) {
 				*ky0 += dy;
 			}
 			*ky1 = *ky0;
@@ -114,7 +110,7 @@ void g03_area (double dx, double dy, double x1, double y1, double r, double x_r,
 				*ky0 += dy;
 			}
 			*ky1 = *ky0;
-			while (g03_y0 > *ky1) {
+			while (g_y0 > *ky1) {
 				*ky1 += dy;
 			}
 			while (x_r - r >= *kx0 + dx) {
@@ -126,9 +122,9 @@ void g03_area (double dx, double dy, double x1, double y1, double r, double x_r,
 			}			
 		}
 	}
-	else if (y1 == g03_y0) {
-		if (x1 > g03_x0) {
-			while (g03_x0 >= *kx0 + dx) {
+	else if (y1 == g_y0) {
+		if (x1 > g_x0) {
+			while (g_x0 >= *kx0 + dx) {
 				*kx0 += dx;
 			}
 			*kx1 = *kx0;
@@ -148,7 +144,7 @@ void g03_area (double dx, double dy, double x1, double y1, double r, double x_r,
 				*kx0 += dx;
 			}
 			*kx1 = *kx0;
-			while (g03_x0 > *kx1) {
+			while (g_x0 > *kx1) {
 				*kx1 += dx;
 			}
 			while (y1 >= *ky0 + dy) {
@@ -160,15 +156,15 @@ void g03_area (double dx, double dy, double x1, double y1, double r, double x_r,
 			}
 		}
 	}
-	else if (x1 > g03_x0) {
-		if (y1 < g03_y0) {
-			if (y_r < g03_y0) {
+	else if (x1 > g_x0) {
+		if (y1 < g_y0) {
+			if (y_r < g_y0) {
 				while (x_r - r >= *kx0 + dx) {
 					*kx0 += dx;
 				}
 			}
 			else {
-				while (g03_x0 >= *kx0 + dx) {
+				while (g_x0 >= *kx0 + dx) {
 					*kx0 += dx;
 				}
 			}
@@ -187,12 +183,12 @@ void g03_area (double dx, double dy, double x1, double y1, double r, double x_r,
 				}
 			}
 			*ky1 = *ky0;
-			while (g03_y0 > *ky1) {
+			while (g_y0 > *ky1) {
 				*ky1 += dy;
 			}
 		}
 		else {
-			while (g03_x0 >= *kx0 + dx) {
+			while (g_x0 >= *kx0 + dx) {
 				*kx0 += dx;
 			}
 			*kx1 = *kx0;
@@ -206,13 +202,13 @@ void g03_area (double dx, double dy, double x1, double y1, double r, double x_r,
 					*kx1 += dx;
 				}
 			}
-			if (x_r > g03_x0) {
+			if (x_r > g_x0) {
 				while (y_r - r >= *ky0 + dy) {
 					*ky0 += dy;
 				}
 			}
 			else {
-				while (g03_y0 >= *ky0 + dy) {
+				while (g_y0 >= *ky0 + dy) {
 					*ky0 += dy;
 				}
 			}
@@ -223,22 +219,22 @@ void g03_area (double dx, double dy, double x1, double y1, double r, double x_r,
 		}
 	}
 	else {
-		if (y1 > g03_y0) {
+		if (y1 > g_y0) {
 			while (x1 >= *kx0 + dx) {
 				*kx0 += dx;
 			}
 			*kx1 = *kx0;
-			if (y_r > g03_y0) {
+			if (y_r > g_y0) {
 				while (x_r + r > *kx1) {
 					*kx1 += dx;
 				}
 			}
 			else {
-				while (g03_x0 > *kx1) {
+				while (g_x0 > *kx1) {
 					*kx1 += dx;
 				}
 			}
-			while (g03_y0 >= *ky0 + dy) {
+			while (g_y0 >= *ky0 + dy) {
 				*ky0 += dy;
 			}
 			*ky1 = *ky0;
@@ -258,13 +254,13 @@ void g03_area (double dx, double dy, double x1, double y1, double r, double x_r,
 				*ky0 += dy;
 			}
 			*ky1 = *ky0;
-			if (x_r < g03_x0) {
+			if (x_r < g_x0) {
 				while (y_r + r > *ky1) {
 					*ky1 += dy;
 				}
 			}
 			else {
-				while (g03_y0 > *ky1) {
+				while (g_y0 > *ky1) {
 					*ky1 += dy;
 				}
 			}
@@ -279,13 +275,13 @@ void g03_area (double dx, double dy, double x1, double y1, double r, double x_r,
 				}
 			}
 			*kx1 = *kx0;
-			while (g03_x0 > *kx1) {
+			while (g_x0 > *kx1) {
 				*kx1 += dx;
 			}
 		}
 	}
 	
-	//printf ("(%f, %f), (%f, %f)\n", *kx0*dx, *kx1*dx, *ky0*dy, *ky1*dy);
+	/*printf ("(%f, %f), (%f, %f)\n", *kx0*dx, *kx1*dx, *ky0*dy, *ky1*dy);*/
 }
 
 int g03_size (double dx, double dy, double x1, double y1, double r, double x_r, double y_r) {
@@ -301,8 +297,8 @@ int g03_size (double dx, double dy, double x1, double y1, double r, double x_r, 
 	int size = 0;
 	double i;
 	
-	if (x1 == g03_x0) {
-		if (y1 > g03_y0) {
+	if (x1 == g_x0) {
+		if (y1 > g_y0) {
 			double j;
 			if (xk0 == x1)
 				j = xk0;
@@ -310,13 +306,13 @@ int g03_size (double dx, double dy, double x1, double y1, double r, double x_r, 
 				j = xk0 + dx;
 			for (i = j; i <= xk1; i = i + dx) {
 				if (r >= i - x_r) {
-					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= g03_y0 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= y1)
+					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= g_y0 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= y1)
 						size = size + 1;
-					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= g03_y0 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= y1)
+					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= g_y0 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= y1)
 						size = size + 1;
 				}
 			}
-			if (yk0 == g03_y0)
+			if (yk0 == g_y0)
 				j = yk0;
 			else
 				j = yk0 + dy;
@@ -332,9 +328,9 @@ int g03_size (double dx, double dy, double x1, double y1, double r, double x_r, 
 		else {
 			for (i = xk0; i <= x1; i = i + dx) {
 				if (r >= i - x_r) {
-					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= y1 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= g03_y0)
+					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= y1 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= g_y0)
 						size = size + 1;
-					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= y1 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= g03_y0)
+					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= y1 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= g_y0)
 						size = size + 1;
 				}
 			}
@@ -343,7 +339,7 @@ int g03_size (double dx, double dy, double x1, double y1, double r, double x_r, 
 				j = yk0;
 			else
 				j = yk0 + dy;
-			for (i = j; i <= g03_y0; i = i + dy) {
+			for (i = j; i <= g_y0; i = i + dy) {
 				if (r >= i - y_r) {
 					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= xk0 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= x1)
 						size = size + 1;
@@ -353,10 +349,10 @@ int g03_size (double dx, double dy, double x1, double y1, double r, double x_r, 
 			}	
 		}
 	}
-	else if (y1 == g03_y0) {
-		if (x1 > g03_x0) {
+	else if (y1 == g_y0) {
+		if (x1 > g_x0) {
 			double j;
-			if (xk0 == g03_x0)
+			if (xk0 == g_x0)
 				j = xk0;
 			else
 				j = xk0 + dx;
@@ -370,9 +366,9 @@ int g03_size (double dx, double dy, double x1, double y1, double r, double x_r, 
 			}
 			for (i = yk0; i <= y1; i = i + dy) {
 				if (r >= i - y_r) {
-					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= g03_x0 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= x1)
+					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= g_x0 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= x1)
 						size = size + 1;
-					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= g03_x0 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= x1)
+					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= g_x0 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= x1)
 						size = size + 1;
 				}
 			}		
@@ -383,7 +379,7 @@ int g03_size (double dx, double dy, double x1, double y1, double r, double x_r, 
 				j = xk0;
 			else
 				j = xk0 + dx;
-			for (i = j; i <= g03_x0; i = i + dx) {
+			for (i = j; i <= g_x0; i = i + dx) {
 				if (r >= i - x_r) {
 					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= y1 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= yk1)
 						size = size + 1;
@@ -397,18 +393,18 @@ int g03_size (double dx, double dy, double x1, double y1, double r, double x_r, 
 				j = yk0 + dy;
 			for (i = j; i <= yk1; i = i + dy) {
 				if (r >= i - y_r) {
-					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= x1 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= g03_x0)
+					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= x1 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= g_x0)
 						size = size + 1;
-					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= x1 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= g03_x0)
+					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= x1 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= g_x0)
 						size = size + 1;
 				}
 			}	
 		}
 	}
-	else if (x1 > g03_x0) {
-		if (y1 > g03_y0) {
+	else if (x1 > g_x0) {
+		if (y1 > g_y0) {
 			double j;
-			if (xk0 == g03_x0)
+			if (xk0 == g_x0)
 				j = xk0;
 			else
 				j = xk0 + dx;
@@ -422,9 +418,9 @@ int g03_size (double dx, double dy, double x1, double y1, double r, double x_r, 
 			}
 			for (i = yk0; i <= y1; i = i + dy) {
 				if (r >= i - y_r) {
-					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= g03_x0 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= kx1)
+					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= g_x0 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= kx1)
 						size = size + 1;
-					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= g03_x0 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= kx1)
+					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= g_x0 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= kx1)
 						size = size + 1;
 				}
 			}
@@ -432,13 +428,13 @@ int g03_size (double dx, double dy, double x1, double y1, double r, double x_r, 
 		else {
 			for (i = xk0; i <= x1; i = i + dx) {
 				if (r >= i - x_r) {
-					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= yk0 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= g03_y0)
+					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= yk0 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= g_y0)
 						size = size + 1;
-					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= yk0 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= g03_y0)
+					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= yk0 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= g_y0)
 						size = size + 1;
 				}
 			}
-			for (i = yk0; i <= g03_y0; i = i + dy) {
+			for (i = yk0; i <= g_y0; i = i + dy) {
 				if (r >= i - y_r) {
 					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= xk0 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= x1)
 						size = size + 1;
@@ -449,8 +445,8 @@ int g03_size (double dx, double dy, double x1, double y1, double r, double x_r, 
 		}
 	}
 	else {
-		if (y1 < g03_y0) {
-			for (i = xk0; i <= g03_x0; i = i + dx) {
+		if (y1 < g_y0) {
+			for (i = xk0; i <= g_x0; i = i + dx) {
 				if (r >= i - x_r) {
 					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= y1 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= yk1)
 						size = size + 1;
@@ -465,9 +461,9 @@ int g03_size (double dx, double dy, double x1, double y1, double r, double x_r, 
 				j = yk0 + dy;
 			for (i = j; i <= yk1; i = i + dy) {
 				if (r >= i - y_r) {
-					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= xk0 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= g03_x0)
+					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= xk0 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= g_x0)
 						size = size + 1;
-					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= xk0 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= g03_x0)
+					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= xk0 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= g_x0)
 						size = size + 1;
 				}
 			}
@@ -480,13 +476,13 @@ int g03_size (double dx, double dy, double x1, double y1, double r, double x_r, 
 				j = xk0 + dx;
 			for (i = j; i <= xk1; i = i + dx) {
 				if (r >= i - x_r) {
-					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= g03_y0 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= yk1)
+					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= g_y0 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= yk1)
 						size = size + 1;
-					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= g03_y0 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= yk1)
+					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= g_y0 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= yk1)
 						size = size + 1;
 				}
 			}
-			if (yk0 == g03_y0)
+			if (yk0 == g_y0)
 				j = yk0;
 			else
 				j = yk0 + dy;
@@ -519,8 +515,8 @@ double** g03_ElMas (int size, double dx, double dy, double x1, double y1, double
 	for (i = 0; i < size; ++i) {
 		arr [i] = (double*)malloc(2*sizeof(double));
 	}
-	if (x1 == g03_x0) {
-		if (y1 > g03_y0) {
+	if (x1 == g_x0) {
+		if (y1 > g_y0) {
 			double j;
 			if (xk0 == x1)
 				j = xk0;
@@ -528,7 +524,7 @@ double** g03_ElMas (int size, double dx, double dy, double x1, double y1, double
 				j = xk0 + dx;
 			for (i = j; i <= xk1; i = i + dx) {
 				if (r >= i - x_r) {
-					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= g03_y0 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= y1) {
+					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= g_y0 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= y1) {
 						arr [k][0] = i;
 						double tmp = sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r;
 						arr [k][1] = yk0;
@@ -536,7 +532,7 @@ double** g03_ElMas (int size, double dx, double dy, double x1, double y1, double
 							arr [k][1] += dy;
 						k = k + 1;
 					}
-					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= g03_y0 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= y1) {
+					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= g_y0 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= y1) {
 						arr [k][0] = i;
 						double tmp = -1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r;
 						arr [k][1] = yk0;
@@ -546,7 +542,7 @@ double** g03_ElMas (int size, double dx, double dy, double x1, double y1, double
 					}
 				}
 			}
-			if (yk0 == g03_y0)
+			if (yk0 == g_y0)
 				j = yk0;
 			else
 				j = yk0 + dy;
@@ -574,7 +570,7 @@ double** g03_ElMas (int size, double dx, double dy, double x1, double y1, double
 		else {
 			for (i = xk0; i <= x1; i = i + dx) {
 				if (r >= i - x_r) {
-					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= y1 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= g03_y0) {
+					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= y1 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= g_y0) {
 						arr [k][0] = i;
 						double tmp = sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r;
 						arr [k][1] = yk0;
@@ -582,7 +578,7 @@ double** g03_ElMas (int size, double dx, double dy, double x1, double y1, double
 							arr [k][1] += dy;
 						k = k + 1;
 					}
-					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= y1 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= g03_y0) {
+					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= y1 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= g_y0) {
 						arr [k][0] = i;
 						double tmp = -1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r;
 						arr [k][1] = yk0;
@@ -597,7 +593,7 @@ double** g03_ElMas (int size, double dx, double dy, double x1, double y1, double
 				j = yk0;
 			else
 				j = yk0 + dy;
-			for (i = j; i <= g03_y0; i = i + dy) {
+			for (i = j; i <= g_y0; i = i + dy) {
 				if (r >= i - y_r) {
 					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= xk0 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= x1) {
 						arr [k][1] = i;
@@ -619,10 +615,10 @@ double** g03_ElMas (int size, double dx, double dy, double x1, double y1, double
 			}	
 		}
 	}
-	else if (y1 == g03_y0) {
-		if (x1 > g03_x0) {
+	else if (y1 == g_y0) {
+		if (x1 > g_x0) {
 			double j;
-			if (xk0 == g03_x0)
+			if (xk0 == g_x0)
 				j = xk0;
 			else
 				j = xk0 + dx;
@@ -648,7 +644,7 @@ double** g03_ElMas (int size, double dx, double dy, double x1, double y1, double
 			}
 			for (i = yk0; i <= y1; i = i + dy) {
 				if (r >= i - y_r) {
-					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= g03_x0 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= x1) {
+					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= g_x0 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= x1) {
 						arr [k][1] = i;
 						double tmp = sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r;
 						arr [k][0] = xk0;
@@ -656,7 +652,7 @@ double** g03_ElMas (int size, double dx, double dy, double x1, double y1, double
 							arr [k][0] += dx;
 						k = k + 1;
 					}
-					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= g03_x0 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= x1) {
+					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= g_x0 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= x1) {
 						arr [k][1] = i;
 						double tmp = -1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r;
 						arr [k][0] = xk0;
@@ -673,7 +669,7 @@ double** g03_ElMas (int size, double dx, double dy, double x1, double y1, double
 				j = xk0;
 			else
 				j = xk0 + dx;
-			for (i = j; i <= g03_x0; i = i + dx) {
+			for (i = j; i <= g_x0; i = i + dx) {
 				if (r >= i - x_r) {
 					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= y1 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= yk1) {
 						arr [k][0] = i;
@@ -699,7 +695,7 @@ double** g03_ElMas (int size, double dx, double dy, double x1, double y1, double
 				j = yk0 + dy;
 			for (i = j; i <= yk1; i = i + dy) {
 				if (r >= i - y_r) {
-					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= x1 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= g03_x0) {
+					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= x1 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= g_x0) {
 						arr [k][1] = i;
 						double tmp = sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r;
 						arr [k][0] = xk0;
@@ -707,7 +703,7 @@ double** g03_ElMas (int size, double dx, double dy, double x1, double y1, double
 							arr [k][0] += dx;
 						k = k + 1;
 					}
-					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= x1 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= g03_x0) {
+					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= x1 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= g_x0) {
 						arr [k][1] = i;
 						double tmp = -1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r;
 						arr [k][0] = xk0;
@@ -719,10 +715,10 @@ double** g03_ElMas (int size, double dx, double dy, double x1, double y1, double
 			}	
 		}
 	}
-	else if (x1 > g03_x0) {
-		if (y1 > g03_y0) {
+	else if (x1 > g_x0) {
+		if (y1 > g_y0) {
 			double j;
-			if (xk0 == g03_x0)
+			if (xk0 == g_x0)
 				j = xk0;
 			else
 				j = xk0 + dx;
@@ -748,7 +744,7 @@ double** g03_ElMas (int size, double dx, double dy, double x1, double y1, double
 			}
 			for (i = yk0; i <= y1; i = i + dy) {
 				if (r >= i - y_r) {
-					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= g03_x0 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= kx1) {
+					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= g_x0 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= kx1) {
 						arr [k][1] = i;
 						double tmp = sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r;
 						arr [k][0] = xk0;
@@ -756,7 +752,7 @@ double** g03_ElMas (int size, double dx, double dy, double x1, double y1, double
 							arr [k][0] += dx;
 						k = k + 1;
 					}
-					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= g03_x0 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= kx1) {
+					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= g_x0 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= kx1) {
 						arr [k][1] = i;
 						double tmp = -1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r;
 						arr [k][0] = xk0;
@@ -770,7 +766,7 @@ double** g03_ElMas (int size, double dx, double dy, double x1, double y1, double
 		else {
 			for (i = xk0; i <= x1; i = i + dx) {
 				if (r >= i - x_r) {
-					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= yk0 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= g03_y0) {
+					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= yk0 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= g_y0) {
 						arr [k][0] = i;
 						double tmp = sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r;
 						arr [k][1] = yk0;
@@ -778,7 +774,7 @@ double** g03_ElMas (int size, double dx, double dy, double x1, double y1, double
 							arr [k][1] += dy;
 						k = k + 1;
 					}
-					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= yk0 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= g03_y0) {
+					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= yk0 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= g_y0) {
 						arr [k][0] = i;
 						double tmp = -1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r;
 						arr [k][1] = yk0;
@@ -788,7 +784,7 @@ double** g03_ElMas (int size, double dx, double dy, double x1, double y1, double
 					}
 				}
 			}
-			for (i = yk0; i <= g03_y0; i = i + dy) {
+			for (i = yk0; i <= g_y0; i = i + dy) {
 				if (r >= i - y_r) {
 					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= xk0 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= x1) {
 						arr [k][1] = i;
@@ -811,8 +807,8 @@ double** g03_ElMas (int size, double dx, double dy, double x1, double y1, double
 		}
 	}
 	else {
-		if (y1 < g03_y0) {
-			for (i = xk0; i <= g03_x0; i = i + dx) {
+		if (y1 < g_y0) {
+			for (i = xk0; i <= g_x0; i = i + dx) {
 				if (r >= i - x_r) {
 					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= y1 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= yk1) {
 						arr [k][0] = i;
@@ -839,7 +835,7 @@ double** g03_ElMas (int size, double dx, double dy, double x1, double y1, double
 				j = yk0 + dy;
 			for (i = j; i <= yk1; i = i + dy) {
 				if (r >= i - y_r) {
-					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= xk0 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= g03_x0) {
+					if ((sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= xk0 && (sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= g_x0) {
 						arr [k][1] = i;
 						double tmp = sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r;
 						arr [k][0] = xk0;
@@ -847,7 +843,7 @@ double** g03_ElMas (int size, double dx, double dy, double x1, double y1, double
 							arr [k][0] += dx;
 						k = k + 1;
 					}
-					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= xk0 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= g03_x0) {
+					if ((-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) >= xk0 && (-1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r) <= g_x0) {
 						arr [k][1] = i;
 						double tmp = -1*sqrt(pow(r, 2) - pow(i - y_r, 2)) + x_r;
 						arr [k][0] = xk0;
@@ -866,7 +862,7 @@ double** g03_ElMas (int size, double dx, double dy, double x1, double y1, double
 				j = xk0 + dx;
 			for (i = j; i <= xk1; i = i + dx) {
 				if (r >= i - x_r) {
-					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= g03_y0 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= yk1) {
+					if ((sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= g_y0 && (sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= yk1) {
 						arr [k][0] = i;
 						double tmp = sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r;
 						arr [k][1] = yk0;
@@ -874,7 +870,7 @@ double** g03_ElMas (int size, double dx, double dy, double x1, double y1, double
 							arr [k][1] += dy;
 						k = k + 1;
 					}
-					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= g03_y0 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= yk1) {
+					if ((-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) >= g_y0 && (-1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r) <= yk1) {
 						arr [k][0] = i;
 						double tmp = -1*sqrt(pow(r, 2) - pow(i - x_r, 2)) + y_r;
 						arr [k][1] = yk0;
@@ -884,7 +880,7 @@ double** g03_ElMas (int size, double dx, double dy, double x1, double y1, double
 					}
 				}
 			}
-			if (yk0 == g03_y0)
+			if (yk0 == g_y0)
 				j = yk0;
 			else
 				j = yk0 + dy;
@@ -928,8 +924,8 @@ void g03_offset (double** arr, int* size) {
 
 void g03_sort (double** arr, int size, double x1, double y1) {
 	int i, j;
-	if (x1 == g03_x0) {
-		if (y1 > g03_y0) {
+	if (x1 == g_x0) {
+		if (y1 > g_y0) {
 			for (i = 0; i < size; ++i) {
 				for (j = i + 1; j < size; ++j) {
 					if (arr [i][1] > arr [j][1]) {
@@ -958,8 +954,8 @@ void g03_sort (double** arr, int size, double x1, double y1) {
 			}
 		}
 	}
-	else if (y1 == g03_y0) {
-		if (x1 > g03_x0) {
+	else if (y1 == g_y0) {
+		if (x1 > g_x0) {
 			for (i = 0; i < size; ++i) {
 				for (j = i + 1; j < size; ++j) {
 					if (arr [i][0] > arr [j][0]) {
@@ -988,9 +984,9 @@ void g03_sort (double** arr, int size, double x1, double y1) {
 			}
 		}
 	}
-	else if (x1 > g03_x0) {
+	else if (x1 > g_x0) {
 		int ind = -1;
-		if (y1 > g03_y0) {
+		if (y1 > g_y0) {
 			for (i = 0; i < size; ++i) {
 				for (j = i + 1; j < size; ++j) {
 					if (arr [i][0] > arr [j][0]) {
@@ -1004,7 +1000,7 @@ void g03_sort (double** arr, int size, double x1, double y1) {
 				}
 			}
 			for (i = 0; i < size; ++i)
-				if (g03_y0 < arr [i][1]) {
+				if (g_y0 < arr [i][1]) {
 						ind = i;
 						break;
 				}
@@ -1036,7 +1032,7 @@ void g03_sort (double** arr, int size, double x1, double y1) {
 				}
 			}
 			for (i = 0; i < size; ++i)
-				if (g03_x0 < arr [i][0]) {
+				if (g_x0 < arr [i][0]) {
 						ind = i;
 						break;
 				}
@@ -1057,7 +1053,7 @@ void g03_sort (double** arr, int size, double x1, double y1) {
 	}
 	else {
 		int ind = -1;
-		if (y1 < g03_y0) {
+		if (y1 < g_y0) {
 			for (i = 0; i < size; ++i) {
 				for (j = i + 1; j < size; ++j) {
 					if (arr [i][0] < arr [j][0]) {
@@ -1071,7 +1067,7 @@ void g03_sort (double** arr, int size, double x1, double y1) {
 				}
 			}
 			for (i = 0; i < size; ++i)
-				if (g03_y0 > arr [i][1]) {
+				if (g_y0 > arr [i][1]) {
 						ind = i;
 						break;
 				}
@@ -1103,7 +1099,7 @@ void g03_sort (double** arr, int size, double x1, double y1) {
 				}
 			}
 			for (i = 0; i < size; ++i)
-				if (g03_x0 > arr [i][0]) {
+				if (g_x0 > arr [i][0]) {
 						ind = i;
 						break;
 				}

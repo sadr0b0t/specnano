@@ -14,12 +14,14 @@ int handler_result_svg(double dx, double dy, double dz, double f) {
 
 int gcode2svg(char* file_path) {
     handler_g01 = &gcode_g01;
+	handler_g02 = &gcode_g02;
+	handler_g03 = &gcode_g03;
     handler_gcommand_result = &handler_result_svg;
 
 	f=fopen(file_path, "r");
 
 	int i;
-	for(i=0; i<5; i++)
+	/*for(i=0; i<5; i++)*/
 		if(file_processing(f))
 			return 0;
 }
