@@ -1,0 +1,13 @@
+INPUT(
+./release\main.o
+./release\mainwindow.o
+./release\slicer.o
+./release\outlineShaider.o
+./release\inlineShaider.o
+./release\triangle3d.o
+./release\point3d.o
+./release\point2d.o
+./release\line2d.o
+./release\modelview.o
+./release\moc_mainwindow.o
+);

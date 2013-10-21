@@ -1,0 +1,13 @@
+INPUT(
+./debug\main.o
+./debug\mainwindow.o
+./debug\slicer.o
+./debug\outlineShaider.o
+./debug\inlineShaider.o
+./debug\triangle3d.o
+./debug\point3d.o
+./debug\point2d.o
+./debug\line2d.o
+./debug\modelview.o
+./debug\moc_mainwindow.o
+);
