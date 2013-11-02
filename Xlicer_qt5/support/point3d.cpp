@@ -4,7 +4,7 @@ Point3D::Point3D()
 {
 }
 
-Point3D::Point3D(double _x, double _y, double _z)
+Point3D::Point3D(float _x, float _y, float _z)
 {
     x=_x;
     y=_y;

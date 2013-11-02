@@ -54,9 +54,10 @@ void MainWindow::on_printButton_clicked()
     if(idsave % 2 == 0)
     {
         GCodeFilePath = QFileDialog::getSaveFileName(0, "Print to G-Code", "", "*.gcode *.GCODE");
-        slicer->setFileModel(genMod->model, GCodeFilePath);
-        qDebug() << slicer->model->size();
-        slicer->slicing();
+        qDebug() << "GCode = " << GCodeFilePath;
+        slicer->setFile(GCodeFilePath);
+        qDebug() << "slicer->modelSIZE" << genMod->model->size();
+        slicer->slicing(genMod->model);
     }
 
     idsave++;
@@ -77,9 +78,8 @@ void MainWindow::on_printButton_activated()
 {
     GCodeFilePath = QFileDialog::getSaveFileName(0, "Print to G-Code", "", "*.gcode *.GCODE");
 
-    int i = 0;
-    slicer->setFileModel(genMod->model, GCodeFilePath);
-    slicer->slicing();
+    slicer->setFile(GCodeFilePath);
+    slicer->slicing(genMod->model);
 }
 
 void MainWindow::on_spinDz_valueChanged(double arg1)

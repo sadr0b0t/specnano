@@ -27,43 +27,43 @@ struct BinSTL
 
 int ModelView::readBinaryModel()
 {
+    float **normal;
+    Triangle3D *tri;
     STLFile.reset();
     QDataStream stream(&STLFile);
     stream.setVersion(QDataStream::Qt_5_1);
     stream.setByteOrder(QDataStream::LittleEndian);
+    stream.setFloatingPointPrecision(QDataStream::SinglePrecision);
     uint i = 0;
     unsigned int numbers;
 
-    Triangle3D tri;
-
     stream.skipRawData(80);
     stream >> numbers;
-    qDebug() << "numbers =" << numbers;
-    qDebug() << "start:" << model->size();
 
-    float array[12];
+    normal = new float*[numbers];
+    tri = new Triangle3D[numbers];
 
     while(i < numbers)
     {
-        stream.setFloatingPointPrecision(QDataStream::SinglePrecision);
-        stream.readRawData((char *) array, sizeof(float) * 12);
+        normal[i] = new float[3];
 
-        tri.vertexes[0].x = (double) array[3];
-        tri.vertexes[0].y = (double) array[4];
-        tri.vertexes[0].z = (double) array[5];
-        tri.vertexes[1].x = (double) array[6];
-        tri.vertexes[1].y = (double) array[7];
-        tri.vertexes[1].z = (double) array[8];
-        tri.vertexes[2].x = (double) array[9];
-        tri.vertexes[2].y = (double) array[10];
-        tri.vertexes[2].z = (double) array[11];
+        for(int j = 0; j < 3; j++)
+        {
+            stream >> normal[i][j];
+        }
 
-        model->push_back(tri);
+        stream >> tri[i].vertexes_p1.x >> tri[i].vertexes_p1.y >> tri[i].vertexes_p1.z;
+        stream >> tri[i].vertexes_p2.x >> tri[i].vertexes_p2.y >> tri[i].vertexes_p2.z;
+        stream >> tri[i].vertexes_p3.x >> tri[i].vertexes_p3.y >> tri[i].vertexes_p3.z;
+
+        stream.skipRawData(2);
+        model->append(tri[i]);
+        delete normal[i];
         i++;
     }
 
-    qDebug() << "end:" << model->size();
-
+    delete normal;
+    delete tri;
     drawSTL = true;
     update();
 }
@@ -75,9 +75,6 @@ int ModelView::readSTLModel()
     QRegExp normal1ExprStr("(?:\\s*)(?:facet)(?:\\s+)(?:normal)(?:\\s+)(-?\\d+(?:.\\d+)?(?:e[-|+]\\d+)?)(?:\\s+)(-?\\d+(?:.\\d+)?(?:e[-|+]\\d+)?)(?:\\s+)(-?\\d+(?:.\\d+)?(?:e[-|+]\\d+)?)(?:\\s*)");
     QRegExp loop1ExprStr("(?:\\s*)(?:outer)(?:\\s+)(?:loop)(?:\\s*)");
     QRegExp normal2ExprStr("(?:\\s*)(?:endfacet)(?:\\s*)");
-/*    QRegExp loop1ExprStr("(?:\\s+)(?:outer)(?:\\s+)(?:loop)(?:\\s*)");
-    QRegExp normal2ExprStr("(?:\\s+)(?:endfacet)(?:\\s*)");
-    QRegExp loop2ExprStr("(?:\\s+)(?:endloop)(?:\\s*)");*/
     QRegExp loop2ExprStr("(?:\\s*)(?:endloop)(?:\\s*)");
 
     QString vendor;
@@ -137,7 +134,19 @@ int ModelView::readSTLModel()
                 p.x = lst.at(1).toDouble();
                 p.y = lst.at(2).toDouble();
                 p.z = lst.at(3).toDouble();
-                tri.vertexes[j] = p;
+
+                if(j == 0)
+                {
+                    tri.vertexes_p1 = p;
+                }
+                if(j == 1)
+                {
+                    tri.vertexes_p2 = p;
+                }
+                if(j == 2)
+                {
+                    tri.vertexes_p3 = p;
+                }
             }
 
             model->append(tri);
@@ -410,10 +419,9 @@ void ModelView::drawTriangles()
 
         while(it != model->end())
         {
-            for(int i = 0; i < 3; i++)
-            {
-                glVertex3d(it->vertexes[i].x, it->vertexes[i].y, it->vertexes[i].z);
-            }
+            glVertex3d(it->vertexes_p1.x, it->vertexes_p1.y, it->vertexes_p1.z);
+            glVertex3d(it->vertexes_p2.x, it->vertexes_p2.y, it->vertexes_p2.z);
+            glVertex3d(it->vertexes_p3.x, it->vertexes_p3.y, it->vertexes_p3.z);
 
             id++;
             it += 1;

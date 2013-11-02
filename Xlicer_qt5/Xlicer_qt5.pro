@@ -15,8 +15,6 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     slicer.cpp \
-    outlineShaider.cpp \
-    inlineShaider.cpp \
     support/triangle3d.cpp \
     support/point3d.cpp \
     support/point2d.cpp \
@@ -25,8 +23,6 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     slicer.h \
-    outlineShaider.h \
-    inlineShaider.h \
     support/triangle3d.h \
     support/point3d.h \
     support/point2d.h \

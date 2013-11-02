@@ -327,15 +327,7 @@ void Slicer::slicing(QList<Triangle3D> *model)
 
         if(slice_byLine->isEmpty())
         {
-            if(n > 200)
-            {
-                break;
-            }
-            else
-            {
-                n++;
-                continue;
-            }
+            break;
         }
 
         removeEqual();

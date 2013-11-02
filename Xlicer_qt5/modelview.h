@@ -31,7 +31,6 @@ public:
     bool drawSTL;
     ModelView(QWidget* pwgt = 0);
     int readBinaryModel();
-
     inline void setFile(QString name)
     {
         STLFile.setFileName(name);

@@ -8,7 +8,7 @@
 class Point2D
 {
 public:
-    Point2D(double _x, double _y);
+    Point2D(float _x, float _y);
     Point2D();
     bool isEqual(Point2D p);
     bool isEqual2(Point2D p);
@@ -17,8 +17,8 @@ public:
 
     void getRounded(double rank);
 
-    double x;
-    double y;
+    float x;
+    float y;
 };
 
 #endif // POINT2D_H

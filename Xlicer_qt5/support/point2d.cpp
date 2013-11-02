@@ -1,6 +1,6 @@
 #include "point2d.h"
 
-Point2D::Point2D(double _x, double _y)
+Point2D::Point2D(float _x, float _y)
 {
     x=_x; y=_y;
 }
